@@ -1,7 +1,0 @@
-{
-  "Subscriptions": {
-    "Postgres": {
-      "ConnectionString": "Host=localhost;Port=5432;Database=sample-subscriptions-module-db;Username=postgres;Password=zaq!@WSX"
-    }
-  }
-}

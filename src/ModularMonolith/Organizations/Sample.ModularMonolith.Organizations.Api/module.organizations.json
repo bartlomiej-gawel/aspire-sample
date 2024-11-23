@@ -1,7 +1,0 @@
-{
-  "Organizations": {
-    "Postgres": {
-      "ConnectionString": "Host=localhost;Port=5432;Database=sample-organizations-module-db;Username=postgres;Password=zaq!@WSX"
-    }
-  }
-}
