@@ -17,6 +17,10 @@ var usersModuleDb = postgres.AddDatabase("sample-users-module-db");
 
 // Bootstrapper project
 builder.AddProject<Projects.Sample_ModularMonolith_Bootstrapper>("sample-bootstrapper")
-    .WaitFor(postgres);
+    .WaitFor(postgres)
+    .WithEnvironment("Notifications__Postgres__ConnectionString", notificationsModuleDb.Resource.ConnectionStringExpression)
+    .WithEnvironment("Organizations__Postgres__ConnectionString", organizationsModuleDb.Resource.ConnectionStringExpression)
+    .WithEnvironment("Subscriptions__Postgres__ConnectionString", subscriptionsModuleDb.Resource.ConnectionStringExpression)
+    .WithEnvironment("Users__Postgres__ConnectionString", usersModuleDb.Resource.ConnectionStringExpression);
 
 builder.Build().Run();

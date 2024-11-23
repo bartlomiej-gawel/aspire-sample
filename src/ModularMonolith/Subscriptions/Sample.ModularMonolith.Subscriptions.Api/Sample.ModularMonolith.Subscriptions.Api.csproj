@@ -16,4 +16,8 @@
         </Content>
     </ItemGroup>
 
+    <ItemGroup>
+        <ProjectReference Include="..\Sample.ModularMonolith.Subscriptions.Contracts\Sample.ModularMonolith.Subscriptions.Contracts.csproj"/>
+    </ItemGroup>
+
 </Project>

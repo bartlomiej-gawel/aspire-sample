@@ -15,5 +15,14 @@
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
     </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Sample.ModularMonolith.Organizations.Contracts\Sample.ModularMonolith.Organizations.Contracts.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Database\Migrations\" />
+      <Folder Include="Features\" />
+    </ItemGroup>
     
 </Project>

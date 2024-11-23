@@ -30,8 +30,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Notifications", "Notificati
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.ModularMonolith.Notifications.Api", "src\ModularMonolith\Notifications\Sample.ModularMonolith.Notifications.Api\Sample.ModularMonolith.Notifications.Api.csproj", "{5DF50A7F-A41E-4B07-882A-37640E13999D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.ModularMonolith.Notifications.Contracts", "src\ModularMonolith\Notifications\Sample.ModularMonolith.Notifications.Contracts\Sample.ModularMonolith.Notifications.Contracts.csproj", "{C792E752-E421-43BF-97BC-9387DD5EB7DF}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Subscriptions", "Subscriptions", "{34E279EB-CB8A-48A0-A781-3A582142BB59}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.ModularMonolith.Subscriptions.Api", "src\ModularMonolith\Subscriptions\Sample.ModularMonolith.Subscriptions.Api\Sample.ModularMonolith.Subscriptions.Api.csproj", "{0B686E2D-976D-4122-998F-6A9B7C69CB6B}"
@@ -60,7 +58,6 @@ Global
 		{DDB29F3A-C788-4A97-ABA6-55FE62C79D49} = {FCE37F1C-476E-4376-8B45-346D0BB6B622}
 		{79884043-E115-4CEF-A656-7553377C4F78} = {B6D7EEFD-0153-4AFF-BDFE-36AED0E7179E}
 		{5DF50A7F-A41E-4B07-882A-37640E13999D} = {79884043-E115-4CEF-A656-7553377C4F78}
-		{C792E752-E421-43BF-97BC-9387DD5EB7DF} = {79884043-E115-4CEF-A656-7553377C4F78}
 		{34E279EB-CB8A-48A0-A781-3A582142BB59} = {B6D7EEFD-0153-4AFF-BDFE-36AED0E7179E}
 		{B5B1DCF0-5E34-402E-8D70-BDF062F63A0A} = {34E279EB-CB8A-48A0-A781-3A582142BB59}
 		{0B686E2D-976D-4122-998F-6A9B7C69CB6B} = {34E279EB-CB8A-48A0-A781-3A582142BB59}
@@ -102,10 +99,6 @@ Global
 		{5DF50A7F-A41E-4B07-882A-37640E13999D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5DF50A7F-A41E-4B07-882A-37640E13999D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5DF50A7F-A41E-4B07-882A-37640E13999D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C792E752-E421-43BF-97BC-9387DD5EB7DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C792E752-E421-43BF-97BC-9387DD5EB7DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C792E752-E421-43BF-97BC-9387DD5EB7DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C792E752-E421-43BF-97BC-9387DD5EB7DF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0B686E2D-976D-4122-998F-6A9B7C69CB6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0B686E2D-976D-4122-998F-6A9B7C69CB6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B686E2D-976D-4122-998F-6A9B7C69CB6B}.Release|Any CPU.ActiveCfg = Release|Any CPU

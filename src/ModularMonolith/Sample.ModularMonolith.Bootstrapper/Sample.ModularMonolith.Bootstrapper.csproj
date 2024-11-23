@@ -11,8 +11,16 @@
         <ProjectReference Include="..\..\Sample.ServiceDefaults\Sample.ServiceDefaults.csproj"/>
         <ProjectReference Include="..\Notifications\Sample.ModularMonolith.Notifications.Api\Sample.ModularMonolith.Notifications.Api.csproj"/>
         <ProjectReference Include="..\Organizations\Sample.ModularMonolith.Organizations.Api\Sample.ModularMonolith.Organizations.Api.csproj"/>
-        <ProjectReference Include="..\Subscriptions\Sample.ModularMonolith.Subscriptions.Api\Sample.ModularMonolith.Subscriptions.Api.csproj" />
+        <ProjectReference Include="..\Subscriptions\Sample.ModularMonolith.Subscriptions.Api\Sample.ModularMonolith.Subscriptions.Api.csproj"/>
         <ProjectReference Include="..\Users\Sample.ModularMonolith.Users.Api\Sample.ModularMonolith.Users.Api.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 
 </Project>

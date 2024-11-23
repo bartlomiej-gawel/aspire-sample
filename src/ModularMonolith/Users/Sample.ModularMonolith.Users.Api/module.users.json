@@ -1,4 +1,7 @@
 {
   "Users": {
+    "Postgres": {
+      "ConnectionString": "Host=localhost;Port=5432;Database=sample-users-module-db;Username=postgres;Password=zaq!@WSX"
+    }
   }
 }
