@@ -4,6 +4,12 @@
         <TargetFramework>net9.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\Aspire\Sample.Aspire.ServiceDefaults\Sample.Aspire.ServiceDefaults.csproj"/>
+        <ProjectReference Include="..\..\Shared\Sample.Shared.Messages\Sample.Shared.Messages.csproj" />
+    </ItemGroup>
 
 </Project>

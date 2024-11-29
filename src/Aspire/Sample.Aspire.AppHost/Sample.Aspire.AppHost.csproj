@@ -13,11 +13,14 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Microsoft.Build" Version="17.12.6"/>
+        <PackageReference Include="Microsoft.Build.Framework" Version="17.12.6"/>
         <PackageReference Include="Aspire.Hosting.AppHost" Version="9.0.0"/>
         <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="9.0.0"/>
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\Gateway\Sample.Gateway.Yarp\Sample.Gateway.Yarp.csproj" />
         <ProjectReference Include="..\..\Services\Sample.Services.Notifications\Sample.Services.Notifications.csproj"/>
         <ProjectReference Include="..\..\Services\Sample.Services.Organizations\Sample.Services.Organizations.csproj"/>
         <ProjectReference Include="..\..\Services\Sample.Services.Users\Sample.Services.Users.csproj"/>
