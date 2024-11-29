@@ -1,22 +1,25 @@
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
-using Sample.Services.Organizations.Database;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Sample.Services.Organizations.Extensions;
+namespace Sample.Aspire.ServiceDefaults.OptionalExtensions;
 
-public static class DatabaseExtensions
+public static class PostgresDatabaseExtensions
 {
-    public static async Task ConfigureDatabaseAsync(this WebApplication app)
+    public static async Task ConfigureDatabaseAsync<TDbContext>(this WebApplication app) 
+        where TDbContext : DbContext
     {
         using var scope = app.Services.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<OrganizationsServiceDbContext>();
+        var dbContext = scope.ServiceProvider.GetRequiredService<TDbContext>();
         
         await CreateDatabaseAsync(dbContext);
         await RunMigrationsAsync(dbContext);
     }
     
-    private static async Task CreateDatabaseAsync(OrganizationsServiceDbContext dbContext)
+    private static async Task CreateDatabaseAsync<TDbContext>(TDbContext dbContext) 
+        where TDbContext : DbContext
     {
         var dbCreator = dbContext.GetService<IRelationalDatabaseCreator>();
         
@@ -28,14 +31,13 @@ public static class DatabaseExtensions
         });
     }
 
-    private static async Task RunMigrationsAsync(OrganizationsServiceDbContext dbContext)
+    private static async Task RunMigrationsAsync<TDbContext>(TDbContext dbContext) 
+        where TDbContext : DbContext
     {
         var executionStrategy = dbContext.Database.CreateExecutionStrategy();
         await executionStrategy.ExecuteAsync(async () =>
         {
-            await using var transaction = await dbContext.Database.BeginTransactionAsync();
             await dbContext.Database.MigrateAsync();
-            await transaction.CommitAsync();
         });
     }
 }
