@@ -16,11 +16,7 @@ var postgres = builder
 //     .WithReference(notificationsServiceDb);
 
 var organizationsServiceDb = postgres.AddDatabase("sample-organizations-service-db");
-// var organizationsService = builder.AddProject<Sample_Services_Organizations>("sample-organizations-service")
-//     .WaitFor(organizationsServiceDb)
-//     .WithReference(organizationsServiceDb);
-
-builder.AddProject<Sample_Services_Organizations>("sample-organizations-service")
+var organizationsService = builder.AddProject<Sample_Services_Organizations>("sample-organizations-service")
     .WaitFor(organizationsServiceDb)
     .WithReference(organizationsServiceDb);
 
