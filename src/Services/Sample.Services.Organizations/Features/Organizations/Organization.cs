@@ -1,7 +1,9 @@
+using Sample.Services.Organizations.Features.Locations;
+
 namespace Sample.Services.Organizations.Features.Organizations;
 
 public sealed class Organization
 {
-    public Guid Id { get; set; } = Guid.CreateVersion7();
-    public string Name { get; set; } = null!;
+    public OrganizationId Id { get; set; } = null!;
+    public List<Location> Locations { get; set; } = [];
 }

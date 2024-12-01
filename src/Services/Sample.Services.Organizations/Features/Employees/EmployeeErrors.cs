@@ -1,6 +1,6 @@
 namespace Sample.Services.Organizations.Features.Employees;
 
-public sealed class EmployeeErrors
+public static class EmployeeErrors
 {
     
 }

@@ -8,13 +8,5 @@ public sealed class OrganizationConfiguration : IEntityTypeConfiguration<Organiz
 {
     public void Configure(EntityTypeBuilder<Organization> builder)
     {
-        builder.HasKey(x => x.Id);
-
-        builder.Property(x => x.Id)
-            .IsRequired();
-
-        builder.Property(x => x.Name)
-            .HasMaxLength(200)
-            .IsRequired();
     }
 }
