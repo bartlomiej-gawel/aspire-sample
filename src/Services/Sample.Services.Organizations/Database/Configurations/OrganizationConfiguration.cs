@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Sample.Services.Organizations.Database.Converters;
 using Sample.Services.Organizations.Features.Organizations;
 
 namespace Sample.Services.Organizations.Database.Configurations;
@@ -11,8 +10,7 @@ public sealed class OrganizationConfiguration : IEntityTypeConfiguration<Organiz
     {
         builder.HasKey(x => x.Id);
 
-        builder.Property(x => x.Id)
-            .HasConversion<OrganizationIdConverter>();
+        builder.Property(x => x.Id);
 
         builder.HasMany(x => x.Locations)
             .WithOne(x => x.Organization)

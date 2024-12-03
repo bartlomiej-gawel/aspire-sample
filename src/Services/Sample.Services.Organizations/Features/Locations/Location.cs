@@ -5,8 +5,8 @@ namespace Sample.Services.Organizations.Features.Locations;
 
 public sealed class Location
 {
-    public LocationId Id { get; set; } = null!;
-    public OrganizationId OrganizationId { get; set; } = null!;
+    public Guid Id { get; set; }
+    public Guid OrganizationId { get; set; }
     public Organization Organization { get; init; } = null!;
     public ICollection<Employee> Employees { get; set; } = [];
 }

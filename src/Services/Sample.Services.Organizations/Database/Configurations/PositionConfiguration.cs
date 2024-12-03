@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Sample.Services.Organizations.Database.Converters;
 using Sample.Services.Organizations.Features.Positions;
 
 namespace Sample.Services.Organizations.Database.Configurations;
@@ -11,10 +10,8 @@ public sealed class PositionConfiguration : IEntityTypeConfiguration<Position>
     {
         builder.HasKey(x => x.Id);
 
-        builder.Property(x => x.Id)
-            .HasConversion<PositionIdConverter>();
+        builder.Property(x => x.Id);
 
-        builder.Property(x => x.OrganizationId)
-            .HasConversion<OrganizationIdConverter>();
+        builder.Property(x => x.OrganizationId);
     }
 }

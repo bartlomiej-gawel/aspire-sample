@@ -4,8 +4,8 @@ namespace Sample.Services.Organizations.Features.Employees;
 
 public sealed class EmployeePosition
 {
-    public EmployeeId EmployeeId { get; set; } = null!;
+    public Guid EmployeeId { get; set; }
     public Employee Employee { get; init; } = null!;
-    public PositionId PositionId { get; set; } = null!;
+    public Guid PositionId { get; set; }
     public Position Position { get; init; } = null!;
 }

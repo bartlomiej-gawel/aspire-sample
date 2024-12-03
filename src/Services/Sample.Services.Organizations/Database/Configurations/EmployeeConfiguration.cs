@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Sample.Services.Organizations.Database.Converters;
 using Sample.Services.Organizations.Features.Employees;
 
 namespace Sample.Services.Organizations.Database.Configurations;
@@ -11,10 +10,8 @@ public sealed class EmployeeConfiguration : IEntityTypeConfiguration<Employee>
     {
         builder.HasKey(x => x.Id);
 
-        builder.Property(x => x.Id)
-            .HasConversion<EmployeeIdConverter>();
+        builder.Property(x => x.Id);
 
-        builder.Property(x => x.LocationId)
-            .HasConversion<LocationIdConverter>();
+        builder.Property(x => x.LocationId);
     }
 }
