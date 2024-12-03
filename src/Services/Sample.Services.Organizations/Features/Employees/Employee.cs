@@ -6,5 +6,5 @@ public sealed class Employee
 {
     public EmployeeId Id { get; set; } = null!;
     public LocationId LocationId { get; set; } = null!;
-    public Location Location { get; set; } = null!;
+    public Location Location { get; init; } = null!;
 }
