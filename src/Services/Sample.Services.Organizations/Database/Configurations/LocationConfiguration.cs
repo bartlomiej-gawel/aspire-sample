@@ -16,7 +16,7 @@ public sealed class LocationConfiguration : IEntityTypeConfiguration<Location>
 
         builder.Property(x => x.OrganizationId)
             .HasConversion<OrganizationIdConverter>();
-        
+
         builder.HasMany(x => x.Employees)
             .WithOne(x => x.Location)
             .HasForeignKey(x => x.LocationId);

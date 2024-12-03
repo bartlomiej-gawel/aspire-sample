@@ -9,7 +9,7 @@ builder.AddServiceDefaults();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment()) 
+if (app.Environment.IsDevelopment())
     await app.RunDatabaseMigrationsAsync<OrganizationsServiceDbContext>();
 
 app.UseServiceDefaults();

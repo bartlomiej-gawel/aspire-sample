@@ -13,11 +13,11 @@ public sealed class OrganizationConfiguration : IEntityTypeConfiguration<Organiz
 
         builder.Property(x => x.Id)
             .HasConversion<OrganizationIdConverter>();
-        
+
         builder.HasMany(x => x.Locations)
             .WithOne(x => x.Organization)
             .HasForeignKey(x => x.OrganizationId);
-        
+
         builder.HasMany(x => x.Positions)
             .WithOne(x => x.Organization)
             .HasForeignKey(x => x.OrganizationId);
