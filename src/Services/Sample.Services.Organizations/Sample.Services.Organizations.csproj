@@ -13,10 +13,14 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.0"/>
+        <PackageReference Include="ErrorOr" Version="2.0.1"/>
+        <PackageReference Include="FastEndpoints" Version="5.32.0" />
+        <PackageReference Include="FastEndpoints.Swagger" Version="5.32.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
     </ItemGroup>
-
+    
 </Project>

@@ -20,10 +20,10 @@ var organizationsService = builder.AddProject<Sample_Services_Organizations>("sa
     .WaitFor(organizationsServiceDb)
     .WithReference(organizationsServiceDb);
 
-// var usersServiceDb = postgres.AddDatabase("sample-users-service-db");
-// var usersService = builder.AddProject<Sample_Services_Users>("sample-users-service")
-//     .WaitFor(usersServiceDb)
-//     .WithReference(usersServiceDb);
+var usersServiceDb = postgres.AddDatabase("sample-users-service-db");
+var usersService = builder.AddProject<Sample_Services_Users>("sample-users-service")
+    .WaitFor(usersServiceDb)
+    .WithReference(usersServiceDb);
 //
 // builder.AddProject<Sample_Gateway_Yarp>("sample-yarp-gateway")
 //     .WaitFor(notificationsService)

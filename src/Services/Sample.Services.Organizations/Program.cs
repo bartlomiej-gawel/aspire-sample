@@ -1,6 +1,6 @@
 using Sample.Aspire.ServiceDefaults;
-using Sample.Aspire.ServiceDefaults.OptionalExtensions;
 using Sample.Services.Organizations.Database;
+using Sample.Services.Organizations.Extensions.Database;
 
 var builder = WebApplication.CreateBuilder(args);
 
