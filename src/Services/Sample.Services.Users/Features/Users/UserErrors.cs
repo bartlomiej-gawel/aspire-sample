@@ -1,6 +1,6 @@
 namespace Sample.Services.Users.Features.Users;
 
-public sealed class UserErrors
+public static class UserErrors
 {
     
 }

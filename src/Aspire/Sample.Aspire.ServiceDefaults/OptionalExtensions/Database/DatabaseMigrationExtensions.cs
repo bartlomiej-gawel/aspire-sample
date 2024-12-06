@@ -1,6 +1,8 @@
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Sample.Services.Organizations.Extensions.Database;
+namespace Sample.Aspire.ServiceDefaults.OptionalExtensions.Database;
 
 public static class DatabaseMigrationExtensions
 {
