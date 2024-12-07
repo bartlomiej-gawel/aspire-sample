@@ -35,11 +35,11 @@ public sealed class LocationConfiguration : IEntityTypeConfiguration<Location>
                 .IsRequired();
         });
         
-        builder.Property(x => x.CreatedAt)
-            .IsRequired();
-
-        builder.Property(x => x.UpdatedAt)
-            .IsRequired(false);
+        // builder.Property(x => x.CreatedAt)
+        //     .IsRequired();
+        //
+        // builder.Property(x => x.UpdatedAt)
+        //     .IsRequired(false);
         
         builder.HasMany(x => x.Employees)
             .WithOne(x => x.Location)

@@ -10,7 +10,5 @@ public sealed class Location
     public Organization Organization { get; init; } = null!;
     public string Name { get; set; } = null!;
     public LocationAddress Address { get; set; } = null!;
-    public DateTime CreatedAt { get; set; }
-    public DateTime? UpdatedAt { get; set; }
     public ICollection<Employee> Employees { get; set; } = [];
 }

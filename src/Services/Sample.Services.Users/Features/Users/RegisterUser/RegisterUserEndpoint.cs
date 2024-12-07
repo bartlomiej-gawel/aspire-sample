@@ -1,12 +1,14 @@
+using ErrorOr;
 using FastEndpoints;
 using MassTransit;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Sample.Services.Users.Database;
 using Sample.Shared.Messages.UsersService;
 
 namespace Sample.Services.Users.Features.Users.RegisterUser;
 
-public sealed class RegisterUserEndpoint : Endpoint<RegisterUserRequest>
+public sealed class RegisterUserEndpoint : Endpoint<RegisterUserRequest, ErrorOr<Ok>>
 {
     private readonly UsersServiceDbContext _dbContext;
     private readonly IPublishEndpoint _publishEndpoint;
@@ -25,20 +27,18 @@ public sealed class RegisterUserEndpoint : Endpoint<RegisterUserRequest>
         AllowAnonymous();
     }
 
-    public override async Task HandleAsync(RegisterUserRequest req, CancellationToken ct)
+    public override async Task<ErrorOr<Ok>> ExecuteAsync(RegisterUserRequest req, CancellationToken ct)
     {
         var isOrganizationExists = await _dbContext.Users.AnyAsync(x => x.OrganizationName == req.OrganizationName, ct);
-        if (isOrganizationExists) 
-            ThrowError("Organization with provided name already exists");
+        if (isOrganizationExists)
+            return UserErrors.OrganizationNameAlreadyExists;
         
         var isEmailExists = await _dbContext.Users.AnyAsync(x => x.Email == req.Email, ct);
-        if (isEmailExists) 
-            ThrowError("User with provided email already exists");
-
+        if (isEmailExists)
+            return UserErrors.EmailAlreadyExists;
+        
         var newUser = new User
         {
-            Id = Guid.CreateVersion7(),
-            OrganizationId = Guid.CreateVersion7(),
             OrganizationName = req.OrganizationName,
             Name = req.Name,
             Surname = req.Surname,
@@ -46,19 +46,20 @@ public sealed class RegisterUserEndpoint : Endpoint<RegisterUserRequest>
             Phone = req.Phone,
             Password = req.Password
         };
-
+        
         await _dbContext.Users.AddAsync(newUser, ct);
-
         await _publishEndpoint.Publish(new UserRegistered(
                 newUser.Id,
-                newUser.OrganizationId,
-                newUser.OrganizationName,
                 newUser.Name,
                 newUser.Surname,
                 newUser.Email,
-                newUser.Phone),
+                newUser.Phone,
+                newUser.OrganizationId,
+                newUser.OrganizationName),
             ct);
         
         await _dbContext.SaveChangesAsync(ct);
+
+        return TypedResults.Ok();
     }
 }

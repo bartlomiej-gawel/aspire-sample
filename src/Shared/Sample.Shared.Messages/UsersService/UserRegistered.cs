@@ -1,10 +1,10 @@
 namespace Sample.Shared.Messages.UsersService;
 
 public sealed record UserRegistered(
-    Guid Id,
+    Guid UserId,
+    string UserName,
+    string UserSurname,
+    string UserEmail,
+    string UserPhone,
     Guid OrganizationId,
-    string OrganizationName,
-    string Name,
-    string Surname,
-    string Email,
-    string Phone);
+    string OrganizationName);

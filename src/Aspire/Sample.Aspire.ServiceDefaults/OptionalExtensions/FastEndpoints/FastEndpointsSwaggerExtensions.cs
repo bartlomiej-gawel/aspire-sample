@@ -6,7 +6,7 @@ namespace Sample.Aspire.ServiceDefaults.OptionalExtensions.FastEndpoints;
 
 public static class FastEndpointsSwaggerExtensions
 {
-    public static IServiceCollection AddSwaggerDocumentation(this IServiceCollection services)
+    public static IServiceCollection AddFastEndpointsSwaggerDocumentation(this IServiceCollection services)
     {
         services.SwaggerDocument(options =>
         {
@@ -21,7 +21,7 @@ public static class FastEndpointsSwaggerExtensions
         return services;
     }
 
-    public static WebApplication UseSwaggerDocumentation(this WebApplication app)
+    public static WebApplication UseFastEndpointsSwaggerDocumentation(this WebApplication app)
     {
         app.UseSwaggerGen();
 

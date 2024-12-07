@@ -11,7 +11,7 @@ builder.AddServiceDefaults();
 builder.AddNpgsqlDbContext<UsersServiceDbContext>("sample-users-service-db");
 
 builder.Services.AddFastEndpointsConfiguration();
-builder.Services.AddSwaggerDocumentation();
+builder.Services.AddFastEndpointsSwaggerDocumentation();
 
 var massTransitRabbitOptions = new MassTransitRabbitOptions();
 builder.Configuration.GetSection(MassTransitRabbitOptions.SectionName).Bind(massTransitRabbitOptions);
@@ -24,7 +24,7 @@ app.UseFastEndpointsConfiguration();
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwaggerDocumentation();
+    app.UseFastEndpointsSwaggerDocumentation();
     await app.RunDatabaseMigrationsAsync<UsersServiceDbContext>();
 }
 

@@ -1,5 +1,3 @@
-using ErrorOr;
-
 namespace Sample.Services.Organizations.Features.Locations;
 
 public sealed record LocationAddress
@@ -18,14 +16,11 @@ public sealed record LocationAddress
         PostalCode = postalCode;
     }
 
-    public static ErrorOr<LocationAddress> CreateLocationAddress(
-        string street,
-        string city,
-        string zipCode)
+    public static LocationAddress Initialize()
     {
         return new LocationAddress(
-            street,
-            city,
-            zipCode);
+            "Default",
+            "Default",
+            "Default");
     }
 }
