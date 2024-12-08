@@ -1,4 +1,6 @@
+using ErrorOr;
 using Sample.Services.Organizations.Features.Locations;
+using Sample.Services.Organizations.Features.Organizations;
 
 namespace Sample.Services.Organizations.Features.Employees;
 
@@ -53,5 +55,16 @@ public sealed class Employee
             employeeSurname,
             employeeEmail,
             employeePhone);
+    }
+
+    public ErrorOr<Success> Activate()
+    {
+        if (Status == EmployeeStatus.Active)
+            return EmployeeErrors.AlreadyActivated;
+        
+        Status = EmployeeStatus.Active;
+        UpdatedAt = DateTime.UtcNow;
+        
+        return Result.Success;
     }
 }

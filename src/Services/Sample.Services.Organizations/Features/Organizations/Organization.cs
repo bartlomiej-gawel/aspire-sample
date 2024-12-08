@@ -1,3 +1,4 @@
+using ErrorOr;
 using Sample.Services.Organizations.Features.Locations;
 using Sample.Services.Organizations.Features.Positions;
 
@@ -35,5 +36,16 @@ public sealed class Organization
         return new Organization(
             organizationId,
             organizationName);
+    }
+    
+    public ErrorOr<Success> Activate()
+    {
+        if (Status == OrganizationStatus.Active)
+            return OrganizationErrors.AlreadyActivated;
+        
+        Status = OrganizationStatus.Active;
+        UpdatedAt = DateTime.UtcNow;
+        
+        return Result.Success;
     }
 }
