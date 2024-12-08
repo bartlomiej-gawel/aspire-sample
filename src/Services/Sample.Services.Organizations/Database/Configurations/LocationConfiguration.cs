@@ -11,9 +11,11 @@ public sealed class LocationConfiguration : IEntityTypeConfiguration<Location>
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Id)
+            .ValueGeneratedNever()
             .IsRequired();
 
         builder.Property(x => x.OrganizationId)
+            .ValueGeneratedNever()
             .IsRequired();
 
         builder.Property(x => x.Name)
@@ -35,11 +37,11 @@ public sealed class LocationConfiguration : IEntityTypeConfiguration<Location>
                 .IsRequired();
         });
         
-        // builder.Property(x => x.CreatedAt)
-        //     .IsRequired();
-        //
-        // builder.Property(x => x.UpdatedAt)
-        //     .IsRequired(false);
+        builder.Property(x => x.CreatedAt)
+            .IsRequired();
+        
+        builder.Property(x => x.UpdatedAt)
+            .IsRequired(false);
         
         builder.HasMany(x => x.Employees)
             .WithOne(x => x.Location)

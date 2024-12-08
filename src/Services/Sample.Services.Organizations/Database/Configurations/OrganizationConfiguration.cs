@@ -11,7 +11,8 @@ public sealed class OrganizationConfiguration : IEntityTypeConfiguration<Organiz
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Id)
-            .ValueGeneratedNever();
+            .ValueGeneratedNever()
+            .IsRequired();
 
         builder.Property(x => x.Name)
             .HasMaxLength(255)
@@ -19,6 +20,12 @@ public sealed class OrganizationConfiguration : IEntityTypeConfiguration<Organiz
 
         builder.Property(x => x.Status)
             .IsRequired();
+        
+        builder.Property(x => x.CreatedAt)
+            .IsRequired();
+        
+        builder.Property(x => x.UpdatedAt)
+            .IsRequired(false);
 
         builder.HasMany(x => x.Locations)
             .WithOne(x => x.Organization)

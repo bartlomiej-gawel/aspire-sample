@@ -14,13 +14,17 @@ public sealed class EmployeePositionConfiguration : IEntityTypeConfiguration<Emp
             x.PositionId
         });
 
-        builder.Property(x => x.EmployeeId);
+        builder.Property(x => x.EmployeeId)
+            .ValueGeneratedNever()
+            .IsRequired();
 
         builder.HasOne(x => x.Employee)
             .WithMany()
             .HasForeignKey(x => x.EmployeeId);
 
-        builder.Property(x => x.PositionId);
+        builder.Property(x => x.PositionId)
+            .ValueGeneratedNever()
+            .IsRequired();
 
         builder.HasOne(x => x.Position)
             .WithMany()

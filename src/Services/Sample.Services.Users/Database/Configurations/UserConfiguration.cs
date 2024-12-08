@@ -11,10 +11,12 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Id)
-            .ValueGeneratedOnAdd();
+            .ValueGeneratedOnAdd()
+            .IsRequired();
 
         builder.Property(x => x.OrganizationId)
-            .ValueGeneratedOnAdd();
+            .ValueGeneratedOnAdd()
+            .IsRequired();
 
         builder.Property(x => x.OrganizationName)
             .HasMaxLength(255)
@@ -38,6 +40,9 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
         
         builder.Property(x => x.Password)
             .HasMaxLength(255)
+            .IsRequired();
+
+        builder.Property(x => x.Status)
             .IsRequired();
     }
 }

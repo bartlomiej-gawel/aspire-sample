@@ -4,7 +4,28 @@ namespace Sample.Services.Organizations.Features.Positions;
 
 public sealed class Position
 {
-    public Guid Id { get; set; }
-    public Guid OrganizationId { get; set; }
+    public Guid Id { get; init; }
+    public Guid OrganizationId { get; init; }
     public Organization Organization { get; init; } = null!;
+
+    private Position()
+    {
+    }
+
+    private Position(
+        Guid positionId,
+        Guid organizationId)
+    {
+        Id = positionId;
+        OrganizationId = organizationId;
+    }
+
+    public static Position Initialize(
+        Guid positionId,
+        Guid organizationId)
+    {
+        return new Position(
+            positionId,
+            organizationId);
+    }
 }

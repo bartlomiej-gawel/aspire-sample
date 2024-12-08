@@ -44,7 +44,8 @@ public sealed class RegisterUserEndpoint : Endpoint<RegisterUserRequest, ErrorOr
             Surname = req.Surname,
             Email = req.Email,
             Phone = req.Phone,
-            Password = req.Password
+            Password = req.Password,
+            Status = UserStatus.Inactive
         };
         
         await _dbContext.Users.AddAsync(newUser, ct);

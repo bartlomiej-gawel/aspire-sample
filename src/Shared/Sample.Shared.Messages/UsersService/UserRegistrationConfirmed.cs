@@ -1,6 +1,5 @@
 namespace Sample.Shared.Messages.UsersService;
 
-public sealed class UserRegistrationConfirmed
-{
-    
-}
+public sealed record UserRegistrationConfirmed(
+    Guid UserId,
+    Guid OrganizationId);

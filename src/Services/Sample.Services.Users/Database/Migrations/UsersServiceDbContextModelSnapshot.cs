@@ -193,6 +193,7 @@ namespace Sample.Services.Users.Database.Migrations
             modelBuilder.Entity("Sample.Services.Users.Features.Users.User", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<string>("Email")
@@ -206,6 +207,7 @@ namespace Sample.Services.Users.Database.Migrations
                         .HasColumnType("character varying(255)");
 
                     b.Property<Guid>("OrganizationId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<string>("OrganizationName")
@@ -222,6 +224,9 @@ namespace Sample.Services.Users.Database.Migrations
                         .IsRequired()
                         .HasMaxLength(15)
                         .HasColumnType("character varying(15)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Surname")
                         .IsRequired()

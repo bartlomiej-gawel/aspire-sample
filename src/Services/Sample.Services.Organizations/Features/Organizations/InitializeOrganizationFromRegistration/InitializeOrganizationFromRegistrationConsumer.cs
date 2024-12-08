@@ -26,49 +26,46 @@ public sealed class InitializeOrganizationFromRegistrationConsumer : IConsumer<U
         {
             _logger.LogInformation("Initializing organization from registration.");
 
+            // location
             var locationId = Guid.CreateVersion7();
+            
+            // position
             var positionId = Guid.CreateVersion7();
+            
+            // employee
+            var employeeId = context.Message.UserId;
+            var employeeName = context.Message.UserName;
+            var employeeSurname = context.Message.UserSurname;
+            var employeeEmail = context.Message.UserEmail;
+            var employeePhone = context.Message.UserPhone;
+            
+            // organization
+            var organizationId = context.Message.OrganizationId;
+            var organizationName = context.Message.OrganizationName;
+            
+            var employee = Employee.Initialize(
+                employeeId,
+                locationId,
+                employeeName,
+                employeeSurname,
+                employeeEmail,
+                employeePhone);
 
-            var employee = new Employee
-            {
-                Id = context.Message.UserId,
-                LocationId = locationId,
-                Name = context.Message.UserName,
-                Surname = context.Message.UserSurname,
-                Email = context.Message.UserEmail,
-                Phone = context.Message.UserPhone,
-                Status = EmployeeStatus.Inactive
-            };
+            var location = Location.Initialize(
+                locationId,
+                organizationId);
 
-            var location = new Location
-            {
-                Id = locationId,
-                OrganizationId = context.Message.OrganizationId,
-                Name = "Default",
-                Address = LocationAddress.Initialize(),
-                Employees = [employee]
-            };
+            var position = Position.Initialize(
+                positionId,
+                organizationId);
 
-            var position = new Position
-            {
-                Id = positionId,
-                OrganizationId = context.Message.OrganizationId
-            };
+            var employeePosition = EmployeePosition.Initialize(
+                employeeId,
+                positionId);
 
-            var employeePosition = new EmployeePosition
-            {
-                EmployeeId = context.Message.UserId,
-                PositionId = positionId
-            };
-
-            var organization = new Organization
-            {
-                Id = context.Message.OrganizationId,
-                Name = context.Message.OrganizationName,
-                Status = OrganizationStatus.Inactive,
-                Locations = [location],
-                Positions = [position]
-            };
+            var organization = Organization.Initialize(
+                organizationId,
+                organizationName);
             
             await _dbContext.Employees.AddAsync(employee, context.CancellationToken);
             await _dbContext.Locations.AddAsync(location, context.CancellationToken);

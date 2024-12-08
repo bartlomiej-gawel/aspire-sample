@@ -11,10 +11,12 @@ public sealed class EmployeeConfiguration : IEntityTypeConfiguration<Employee>
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Id)
-            .ValueGeneratedNever();
+            .ValueGeneratedNever()
+            .IsRequired();
 
         builder.Property(x => x.LocationId)
-            .ValueGeneratedNever();
+            .ValueGeneratedNever()
+            .IsRequired();
         
         builder.Property(x => x.Name)
             .HasMaxLength(255)
@@ -31,5 +33,14 @@ public sealed class EmployeeConfiguration : IEntityTypeConfiguration<Employee>
         builder.Property(x => x.Phone)
             .HasMaxLength(15)
             .IsRequired();
+
+        builder.Property(x => x.Status)
+            .IsRequired();
+
+        builder.Property(x => x.CreatedAt)
+            .IsRequired();
+        
+        builder.Property(x => x.UpdatedAt)
+            .IsRequired(false);
     }
 }
