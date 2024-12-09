@@ -8,7 +8,7 @@ using Sample.Shared.Messages.UsersService;
 
 namespace Sample.Services.Users.Features.Users.RegisterUser;
 
-public sealed class RegisterUserEndpoint : Endpoint<RegisterUserRequest, ErrorOr<Ok>>
+public sealed class RegisterUserEndpoint : Endpoint<RegisterUserRequest, ErrorOr<IResult>>
 {
     private readonly UsersServiceDbContext _dbContext;
     private readonly IPublishEndpoint _publishEndpoint;
@@ -23,11 +23,11 @@ public sealed class RegisterUserEndpoint : Endpoint<RegisterUserRequest, ErrorOr
 
     public override void Configure()
     {
-        Post("api/users-service/users");
+        Post("api/users-service/users/register");
         AllowAnonymous();
     }
 
-    public override async Task<ErrorOr<Ok>> ExecuteAsync(RegisterUserRequest req, CancellationToken ct)
+    public override async Task<ErrorOr<IResult>> ExecuteAsync(RegisterUserRequest req, CancellationToken ct)
     {
         var isOrganizationExists = await _dbContext.Users.AnyAsync(x => x.OrganizationName == req.OrganizationName, ct);
         if (isOrganizationExists)

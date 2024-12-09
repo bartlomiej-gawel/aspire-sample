@@ -1,6 +1,5 @@
 using ErrorOr;
 using Sample.Services.Organizations.Features.Locations;
-using Sample.Services.Organizations.Features.Organizations;
 
 namespace Sample.Services.Organizations.Features.Employees;
 
@@ -8,7 +7,7 @@ public sealed class Employee
 {
     public Guid Id { get; init; }
     public Guid LocationId { get; private set; }
-    public Location Location { get; private set; } = null!;
+    public Location Location { get; init; } = null!;
     public string Name { get; private set; } = null!;
     public string Surname { get; private set; } = null!;
     public string Email { get; private set; } = null!;

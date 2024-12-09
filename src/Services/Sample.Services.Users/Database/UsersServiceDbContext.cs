@@ -1,5 +1,6 @@
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
+using Sample.Services.Users.Features.RefreshTokens;
 using Sample.Services.Users.Features.Users;
 
 namespace Sample.Services.Users.Database;
@@ -7,6 +8,7 @@ namespace Sample.Services.Users.Database;
 public sealed class UsersServiceDbContext : DbContext
 {
     public DbSet<User> Users => Set<User>();
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
     
     public UsersServiceDbContext(DbContextOptions<UsersServiceDbContext> options) 
         : base(options)
