@@ -1,23 +1,27 @@
 using ErrorOr;
 using FastEndpoints;
 using MassTransit;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Sample.Services.Users.Database;
+using Sample.Services.Users.Features.VerificationTokens;
 using Sample.Shared.Messages.UsersService;
+using static Sample.Services.Users.Features.Users.User;
 
 namespace Sample.Services.Users.Features.Users.RegisterUser;
 
 public sealed class RegisterUserEndpoint : Endpoint<RegisterUserRequest, ErrorOr<IResult>>
 {
     private readonly UsersServiceDbContext _dbContext;
+    private readonly UserPasswordHasher _userPasswordHasher;
     private readonly IPublishEndpoint _publishEndpoint;
 
     public RegisterUserEndpoint(
         UsersServiceDbContext dbContext, 
+        UserPasswordHasher userPasswordHasher,
         IPublishEndpoint publishEndpoint)
     {
         _dbContext = dbContext;
+        _userPasswordHasher = userPasswordHasher;
         _publishEndpoint = publishEndpoint;
     }
 
@@ -37,26 +41,43 @@ public sealed class RegisterUserEndpoint : Endpoint<RegisterUserRequest, ErrorOr
         if (isEmailExists)
             return UserErrors.EmailAlreadyExists;
         
-        var newUser = new User
+        var user = Register(
+            req.OrganizationName,
+            req.Name,
+            req.Surname,
+            req.Email,
+            req.Phone,
+            _userPasswordHasher.Hash(req.Password));
+
+        var verificationToken = new VerificationToken
         {
-            OrganizationName = req.OrganizationName,
-            Name = req.Name,
-            Surname = req.Surname,
-            Email = req.Email,
-            Phone = req.Phone,
-            Password = req.Password,
-            Status = UserStatus.Inactive
+            Id = default,
+            UserId = default,
+            User = null,
+            CreatedAt = default,
+            ExpireAt = default
         };
+
+        // var newUser = new User
+        // {
+        //     OrganizationName = req.OrganizationName,
+        //     Name = req.Name,
+        //     Surname = req.Surname,
+        //     Email = req.Email,
+        //     Phone = req.Phone,
+        //     Password = req.Password,
+        //     Status = UserStatus.Inactive
+        // };
         
-        await _dbContext.Users.AddAsync(newUser, ct);
+        await _dbContext.Users.AddAsync(user, ct);
         await _publishEndpoint.Publish(new UserRegistered(
-                newUser.Id,
-                newUser.Name,
-                newUser.Surname,
-                newUser.Email,
-                newUser.Phone,
-                newUser.OrganizationId,
-                newUser.OrganizationName),
+                user.Id,
+                user.Name,
+                user.Surname,
+                user.Email,
+                user.Phone,
+                user.OrganizationId,
+                user.OrganizationName),
             ct);
         
         await _dbContext.SaveChangesAsync(ct);

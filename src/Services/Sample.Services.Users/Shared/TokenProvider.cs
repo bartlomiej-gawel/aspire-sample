@@ -36,8 +36,8 @@ public sealed class TokenProvider
         };
 
         var jwtHandler = new JsonWebTokenHandler();
-        var jwtToken = jwtHandler.CreateToken(tokenDescriptor);
-        return jwtToken;
+        var accessToken = jwtHandler.CreateToken(tokenDescriptor);
+        return accessToken;
     }
 
     public string GenerateRefreshToken()

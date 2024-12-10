@@ -10,16 +10,16 @@ namespace Sample.Services.Users.Features.Users.LoginUser;
 public sealed class LoginUserEndpoint : Endpoint<LoginUserRequest, ErrorOr<LoginUserResponse>>
 {
     private readonly UsersServiceDbContext _dbContext;
-    private readonly PasswordHasher _passwordHasher;
+    private readonly UserPasswordHasher _userPasswordHasher;
     private readonly TokenProvider _tokenProvider;
 
     public LoginUserEndpoint(
         UsersServiceDbContext dbContext,
-        PasswordHasher passwordHasher,
+        UserPasswordHasher userPasswordHasher,
         TokenProvider tokenProvider)
     {
         _dbContext = dbContext;
-        _passwordHasher = passwordHasher;
+        _userPasswordHasher = userPasswordHasher;
         _tokenProvider = tokenProvider;
     }
 
@@ -37,26 +37,21 @@ public sealed class LoginUserEndpoint : Endpoint<LoginUserRequest, ErrorOr<Login
 
         if (user.Status != UserStatus.Active)
             return UserErrors.NotActivated;
-        
-        var isPasswordVerified = _passwordHasher.Verify(req.Password, user.Password);
+
+        var isPasswordVerified = _userPasswordHasher.Verify(req.Password, user.Password);
         if (!isPasswordVerified)
             return UserErrors.IncorrectPassword;
 
-        var accessToken = _tokenProvider.GenerateAccessToken(user);
-        var refreshToken = new RefreshToken
-        {
-            Id = Guid.CreateVersion7(),
-            UserId = user.Id,
-            Value = _tokenProvider.GenerateRefreshToken(),
-            ExpireAt = DateTime.UtcNow.AddDays(7)
-        };
-        
+        var refreshToken = RefreshToken.Create(
+            user.Id,
+            _tokenProvider.GenerateRefreshToken());
+
         await _dbContext.RefreshTokens.AddAsync(refreshToken, ct);
         await _dbContext.SaveChangesAsync(ct);
 
         return new LoginUserResponse
         {
-            AccessToken = accessToken,
+            AccessToken = _tokenProvider.GenerateAccessToken(user),
             RefreshToken = refreshToken.Value
         };
     }
