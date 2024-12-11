@@ -33,6 +33,7 @@ public sealed class ErrorOrPostProcessor : IGlobalPostProcessor
         return problem?.Type switch
         {
             ErrorType.Conflict => context.HttpContext.Response.SendAsync("Invalid operation", StatusCodes.Status409Conflict, cancellation: ct),
+            ErrorType.Unexpected => context.HttpContext.Response.SendAsync("Unexpected error", StatusCodes.Status400BadRequest, cancellation: ct),
             ErrorType.NotFound => context.HttpContext.Response.SendNotFoundAsync(ct),
             ErrorType.Unauthorized => context.HttpContext.Response.SendUnauthorizedAsync(ct),
             ErrorType.Forbidden => context.HttpContext.Response.SendForbiddenAsync(ct),

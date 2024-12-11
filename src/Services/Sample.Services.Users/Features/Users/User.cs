@@ -1,3 +1,5 @@
+using ErrorOr;
+
 namespace Sample.Services.Users.Features.Users;
 
 public sealed class User
@@ -11,6 +13,8 @@ public sealed class User
     public string Phone { get; set; } = null!;
     public string Password { get; set; } = null!;
     public UserStatus Status { get; set; }
+    public DateTime CreatedAt { get; }
+    public DateTime? UpdatedAt { get; private set; }
 
     private User()
     {
@@ -33,6 +37,8 @@ public sealed class User
         Phone = phone;
         Password = password;
         Status = UserStatus.Inactive;
+        CreatedAt = DateTime.UtcNow;
+        UpdatedAt = null;
     }
 
     public static User Register(
@@ -50,5 +56,16 @@ public sealed class User
             email,
             phone,
             password);
+    }
+    
+    public ErrorOr<Success> Activate()
+    {
+        if (Status == UserStatus.Active)
+            return UserErrors.AlreadyActivated;
+        
+        Status = UserStatus.Active;
+        UpdatedAt = DateTime.UtcNow;
+        
+        return Result.Success;
     }
 }

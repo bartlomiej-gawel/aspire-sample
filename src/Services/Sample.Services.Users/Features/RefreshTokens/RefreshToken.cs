@@ -4,11 +4,11 @@ namespace Sample.Services.Users.Features.RefreshTokens;
 
 public sealed class RefreshToken
 {
-    public Guid Id { get; set; }
-    public Guid UserId { get; set; }
+    public Guid Id { get; }
+    public Guid UserId { get; }
     public User User { get; init; } = null!;
-    public string Value { get; set; } = null!;
-    public DateTime ExpireAt { get; set; }
+    public string Value { get; private set; } = null!;
+    public DateTime ExpireAt { get; private set; }
 
     private RefreshToken()
     {

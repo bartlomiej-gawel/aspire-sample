@@ -8,6 +8,10 @@ public static class UserErrors
         "UserErrors.NotFound",
         "User with provided id was not found");
     
+    public static readonly Error AlreadyActivated = Error.Conflict(
+        "UserErrors.AlreadyActivated",
+        "User with provided id is already activated.");
+    
     public static readonly Error NotActivated = Error.Conflict(
         "UserErrors.NotActivated",
         "User with provided id is not activated");

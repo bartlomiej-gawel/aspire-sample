@@ -2,5 +2,5 @@ namespace Sample.Services.Users.Features.VerificationTokens.VerifyUserRegistrati
 
 public sealed class VerifyUserRegistrationRequest
 {
-    
+    public required Guid VerificationToken { get; init; }
 }
