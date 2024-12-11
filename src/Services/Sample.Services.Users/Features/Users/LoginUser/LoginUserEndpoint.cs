@@ -10,16 +10,13 @@ namespace Sample.Services.Users.Features.Users.LoginUser;
 public sealed class LoginUserEndpoint : Endpoint<LoginUserRequest, ErrorOr<LoginUserResponse>>
 {
     private readonly UsersServiceDbContext _dbContext;
-    private readonly UserPasswordHasher _userPasswordHasher;
     private readonly TokenProvider _tokenProvider;
 
     public LoginUserEndpoint(
         UsersServiceDbContext dbContext,
-        UserPasswordHasher userPasswordHasher,
         TokenProvider tokenProvider)
     {
         _dbContext = dbContext;
-        _userPasswordHasher = userPasswordHasher;
         _tokenProvider = tokenProvider;
     }
 
@@ -38,13 +35,13 @@ public sealed class LoginUserEndpoint : Endpoint<LoginUserRequest, ErrorOr<Login
         if (user.Status != UserStatus.Active)
             return UserErrors.NotActivated;
 
-        var isPasswordVerified = _userPasswordHasher.Verify(req.Password, user.Password);
+        var isPasswordVerified = UserPasswordHasher.Verify(req.Password, user.Password);
         if (!isPasswordVerified)
             return UserErrors.IncorrectPassword;
 
         var refreshToken = RefreshToken.Create(
             user.Id,
-            _tokenProvider.GenerateRefreshToken());
+            TokenProvider.GenerateRefreshToken());
 
         await _dbContext.RefreshTokens.AddAsync(refreshToken, ct);
         await _dbContext.SaveChangesAsync(ct);

@@ -7,11 +7,11 @@ using Sample.Services.Users.Features.Users;
 
 namespace Sample.Services.Users.Shared;
 
-public sealed class TokenProvider
+public abstract class TokenProvider
 {
     private readonly IConfiguration _configuration;
 
-    public TokenProvider(IConfiguration configuration)
+    protected TokenProvider(IConfiguration configuration)
     {
         _configuration = configuration;
     }
@@ -40,7 +40,7 @@ public sealed class TokenProvider
         return accessToken;
     }
 
-    public string GenerateRefreshToken()
+    public static string GenerateRefreshToken()
     {
         return Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
     }

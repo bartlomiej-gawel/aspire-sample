@@ -34,7 +34,7 @@ public sealed class LoginWithRefreshTokenEndpoint : Endpoint<LoginWithRefreshTok
         if (refreshToken is null || refreshToken.ExpireAt < DateTime.UtcNow)
             return RefreshTokenErrors.AlreadyExpired;
         
-        refreshToken.Update(_tokenProvider.GenerateRefreshToken());
+        refreshToken.Update(TokenProvider.GenerateRefreshToken());
         
         await _dbContext.SaveChangesAsync(ct);
 

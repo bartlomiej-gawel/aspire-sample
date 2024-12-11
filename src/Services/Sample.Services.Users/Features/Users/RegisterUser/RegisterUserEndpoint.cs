@@ -12,17 +12,20 @@ namespace Sample.Services.Users.Features.Users.RegisterUser;
 public sealed class RegisterUserEndpoint : Endpoint<RegisterUserRequest, ErrorOr<IResult>>
 {
     private readonly UsersServiceDbContext _dbContext;
-    private readonly UserPasswordHasher _userPasswordHasher;
     private readonly IPublishEndpoint _publishEndpoint;
+    private readonly TimeProvider _timeProvider;
+    private readonly VerificationTokenLinkFactory _verificationTokenLinkFactory;
 
     public RegisterUserEndpoint(
-        UsersServiceDbContext dbContext, 
-        UserPasswordHasher userPasswordHasher,
-        IPublishEndpoint publishEndpoint)
+        UsersServiceDbContext dbContext,
+        IPublishEndpoint publishEndpoint,
+        TimeProvider timeProvider,
+        VerificationTokenLinkFactory verificationTokenLinkFactory)
     {
         _dbContext = dbContext;
-        _userPasswordHasher = userPasswordHasher;
         _publishEndpoint = publishEndpoint;
+        _timeProvider = timeProvider;
+        _verificationTokenLinkFactory = verificationTokenLinkFactory;
     }
 
     public override void Configure()
@@ -33,43 +36,35 @@ public sealed class RegisterUserEndpoint : Endpoint<RegisterUserRequest, ErrorOr
 
     public override async Task<ErrorOr<IResult>> ExecuteAsync(RegisterUserRequest req, CancellationToken ct)
     {
-        var isOrganizationExists = await _dbContext.Users.AnyAsync(x => x.OrganizationName == req.OrganizationName, ct);
-        if (isOrganizationExists)
-            return UserErrors.OrganizationNameAlreadyExists;
-        
-        var isEmailExists = await _dbContext.Users.AnyAsync(x => x.Email == req.Email, ct);
-        if (isEmailExists)
-            return UserErrors.EmailAlreadyExists;
-        
+        var existingUser = await _dbContext.Users
+            .Where(x => x.OrganizationName == req.OrganizationName || x.Email == req.Email)
+            .Select(x => new { x.OrganizationName, x.Email })
+            .FirstOrDefaultAsync(ct);
+
+        if (existingUser != null)
+        {
+            if (existingUser.OrganizationName == req.OrganizationName)
+                return UserErrors.OrganizationNameAlreadyExists;
+
+            if (existingUser.Email == req.Email)
+                return UserErrors.EmailAlreadyExists;
+        }
+
         var user = Register(
             req.OrganizationName,
             req.Name,
             req.Surname,
             req.Email,
             req.Phone,
-            _userPasswordHasher.Hash(req.Password));
+            UserPasswordHasher.Hash(req.Password));
 
-        var verificationToken = new VerificationToken
-        {
-            Id = default,
-            UserId = default,
-            User = null,
-            CreatedAt = default,
-            ExpireAt = default
-        };
+        var verificationToken = VerificationToken.Generate(
+            user.Id,
+            _timeProvider.GetUtcNow().DateTime);
 
-        // var newUser = new User
-        // {
-        //     OrganizationName = req.OrganizationName,
-        //     Name = req.Name,
-        //     Surname = req.Surname,
-        //     Email = req.Email,
-        //     Phone = req.Phone,
-        //     Password = req.Password,
-        //     Status = UserStatus.Inactive
-        // };
-        
         await _dbContext.Users.AddAsync(user, ct);
+        await _dbContext.VerificationTokens.AddAsync(verificationToken, ct);
+
         await _publishEndpoint.Publish(new UserRegistered(
                 user.Id,
                 user.Name,
@@ -77,9 +72,10 @@ public sealed class RegisterUserEndpoint : Endpoint<RegisterUserRequest, ErrorOr
                 user.Email,
                 user.Phone,
                 user.OrganizationId,
-                user.OrganizationName),
+                user.OrganizationName,
+                _verificationTokenLinkFactory.CreateLink(verificationToken)),
             ct);
-        
+
         await _dbContext.SaveChangesAsync(ct);
 
         return TypedResults.Ok();

@@ -2,7 +2,7 @@ using System.Security.Cryptography;
 
 namespace Sample.Services.Users.Features.Users;
 
-public sealed class UserPasswordHasher
+public static class UserPasswordHasher
 {
     private static readonly HashAlgorithmName Algorithm = HashAlgorithmName.SHA512;
     
@@ -10,7 +10,7 @@ public sealed class UserPasswordHasher
     private const int HashSize = 32;
     private const int Iterations = 100000;
     
-    public string Hash(string password)
+    public static string Hash(string password)
     {
         var salt = RandomNumberGenerator.GetBytes(SaltSize);
         var hash = Rfc2898DeriveBytes.Pbkdf2(password, salt, Iterations, Algorithm, HashSize);
@@ -18,7 +18,7 @@ public sealed class UserPasswordHasher
         return $"{Convert.ToHexString(hash)}-{Convert.ToHexString(salt)}";
     }
 
-    public bool Verify(string password, string hashedPassword)
+    public static bool Verify(string password, string hashedPassword)
     {
         var parts = hashedPassword.Split('-');
         var hash = Convert.FromHexString(parts[0]);

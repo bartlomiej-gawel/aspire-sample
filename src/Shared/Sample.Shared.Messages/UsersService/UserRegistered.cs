@@ -7,4 +7,5 @@ public sealed record UserRegistered(
     string UserEmail,
     string UserPhone,
     Guid OrganizationId,
-    string OrganizationName);
+    string OrganizationName,
+    string VerificationLink);
