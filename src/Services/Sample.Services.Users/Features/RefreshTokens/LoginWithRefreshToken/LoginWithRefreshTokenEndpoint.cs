@@ -10,18 +10,22 @@ public sealed class LoginWithRefreshTokenEndpoint : Endpoint<LoginWithRefreshTok
 {
     private readonly UsersServiceDbContext _dbContext;
     private readonly TokenProvider _tokenProvider;
+    private readonly TimeProvider _timeProvider;
 
     public LoginWithRefreshTokenEndpoint(
         UsersServiceDbContext dbContext,
-        TokenProvider tokenProvider)
+        TokenProvider tokenProvider,
+        TimeProvider timeProvider)
     {
         _dbContext = dbContext;
         _tokenProvider = tokenProvider;
+        _timeProvider = timeProvider;
     }
 
     public override void Configure()
     {
-        Post("api/users-service/refresh-tokens/login");
+        Post("login");
+        Group<RefreshTokenEndpointsGroup>();
         AllowAnonymous();
     }
 
@@ -31,7 +35,7 @@ public sealed class LoginWithRefreshTokenEndpoint : Endpoint<LoginWithRefreshTok
             .Include(x => x.User)
             .FirstOrDefaultAsync(x => x.Value == req.RefreshToken, ct);
         
-        if (refreshToken is null || refreshToken.ExpireAt < DateTime.UtcNow)
+        if (refreshToken is null || refreshToken.ExpireAt < _timeProvider.GetUtcNow().DateTime)
             return RefreshTokenErrors.AlreadyExpired;
         
         refreshToken.Update(TokenProvider.GenerateRefreshToken());

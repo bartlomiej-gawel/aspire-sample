@@ -5,7 +5,7 @@ namespace Sample.Services.Organizations.Features.Employees;
 
 public sealed class Employee
 {
-    public Guid Id { get; init; }
+    public Guid Id { get; }
     public Guid LocationId { get; private set; }
     public Location Location { get; init; } = null!;
     public string Name { get; private set; } = null!;

@@ -2,7 +2,7 @@ using ErrorOr;
 
 namespace Sample.Services.Users.Features.RefreshTokens;
 
-public sealed class RefreshTokenErrors
+public static class RefreshTokenErrors
 {
     public static readonly Error UnauthorizedRevoke = Error.Unauthorized(
         "RefreshTokenErrors.UnauthorizedRevoke",

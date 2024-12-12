@@ -45,7 +45,7 @@ public sealed class ActivateOrganizationFromConfirmationConsumer : IConsumer<Use
                 return;
             }
             
-            var employee = location.Employees.First(e => e.Id == context.Message.UserId);
+            var employee = location.Employees.First(x => x.Id == context.Message.UserId);
             var employeeActivateResult = employee.Activate();
             if (employeeActivateResult.IsError)
             {

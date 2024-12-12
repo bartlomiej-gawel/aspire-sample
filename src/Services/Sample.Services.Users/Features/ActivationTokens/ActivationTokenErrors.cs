@@ -1,18 +1,18 @@
 using ErrorOr;
 
-namespace Sample.Services.Users.Features.VerificationTokens;
+namespace Sample.Services.Users.Features.ActivationTokens;
 
-public static class VerificationTokenErrors
+public static class ActivationTokenErrors
 {
     public static readonly Error TokenExpired = Error.Conflict(
-        "VerificationTokenErrors.TokenExpired",
+        "ActivationTokenErrors.TokenExpired",
         "Provided token is expired");
     
     public static readonly Error HttpContextNotAvailable = Error.Unexpected(
-        "VerificationTokenErrors.HttpContextNotAvailable",
+        "ActivationTokenErrors.HttpContextNotAvailable",
         "Http context is not available");
 
     public static readonly Error FailedToGenerate = Error.Conflict(
-        "VerificationTokenErrors.FailedToGenerate",
-        "Failed to generate verification link.");
+        "ActivationTokenErrors.FailedToGenerate",
+        "Failed to generate activation link.");
 }

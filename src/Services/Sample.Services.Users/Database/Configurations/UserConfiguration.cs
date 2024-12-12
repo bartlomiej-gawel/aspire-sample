@@ -44,5 +44,11 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.Property(x => x.Status)
             .IsRequired();
+
+        builder.Property(x => x.CreatedAt)
+            .IsRequired();
+        
+        builder.Property(x => x.UpdatedAt)
+            .IsRequired(false);
     }
 }

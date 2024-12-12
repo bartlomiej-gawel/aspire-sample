@@ -12,9 +12,7 @@ builder.AddNpgsqlDbContext<OrganizationsServiceDbContext>("sample-organizations-
 // builder.Services.AddFastEndpointsConfiguration();
 // builder.Services.AddSwaggerDocumentation();
 
-var massTransitRabbitOptions = new MassTransitRabbitOptions();
-builder.Configuration.GetSection(MassTransitRabbitOptions.SectionName).Bind(massTransitRabbitOptions);
-builder.Services.AddMassTransitConfiguration<OrganizationsServiceDbContext>(massTransitRabbitOptions, Assembly.GetExecutingAssembly());
+builder.Services.AddMassTransitConfiguration<OrganizationsServiceDbContext>(builder.Configuration, Assembly.GetExecutingAssembly());
 
 var app = builder.Build();
 

@@ -9,9 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
 builder.AddNpgsqlDbContext<NotificationsServiceDbContext>("sample-notifications-service-db");
 
-var massTransitRabbitOptions = new MassTransitRabbitOptions();
-builder.Configuration.GetSection(MassTransitRabbitOptions.SectionName).Bind(massTransitRabbitOptions);
-builder.Services.AddMassTransitConfiguration<NotificationsServiceDbContext>(massTransitRabbitOptions, Assembly.GetExecutingAssembly());
+builder.Services.AddMassTransitConfiguration<NotificationsServiceDbContext>(builder.Configuration, Assembly.GetExecutingAssembly());
 
 var app = builder.Build();
 

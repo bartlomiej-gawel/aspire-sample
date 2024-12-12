@@ -7,6 +7,8 @@ public sealed class Position
     public Guid Id { get; init; }
     public Guid OrganizationId { get; init; }
     public Organization Organization { get; init; } = null!;
+    public DateTime CreatedAt { get; }
+    public DateTime? UpdatedAt { get; private set; }
 
     private Position()
     {
@@ -18,6 +20,8 @@ public sealed class Position
     {
         Id = positionId;
         OrganizationId = organizationId;
+        CreatedAt = DateTime.UtcNow;
+        UpdatedAt = null;
     }
 
     public static Position Initialize(

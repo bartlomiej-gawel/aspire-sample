@@ -6,7 +6,7 @@ namespace Sample.Services.Organizations.Features.Organizations;
 
 public sealed class Organization
 {
-    public Guid Id { get; init; }
+    public Guid Id { get; }
     public string Name { get; private set; } = null!;
     public OrganizationStatus Status { get; private set; }
     public DateTime CreatedAt { get; }

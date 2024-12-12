@@ -10,12 +10,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
 builder.AddNpgsqlDbContext<UsersServiceDbContext>("sample-users-service-db");
 
+builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddFastEndpointsConfiguration();
 builder.Services.AddFastEndpointsSwaggerDocumentation();
-
-var massTransitRabbitOptions = new MassTransitRabbitOptions();
-builder.Configuration.GetSection(MassTransitRabbitOptions.SectionName).Bind(massTransitRabbitOptions);
-builder.Services.AddMassTransitConfiguration<UsersServiceDbContext>(massTransitRabbitOptions, Assembly.GetExecutingAssembly());
+builder.Services.AddMassTransitConfiguration<UsersServiceDbContext>(builder.Configuration, Assembly.GetExecutingAssembly());
 
 var app = builder.Build();
 

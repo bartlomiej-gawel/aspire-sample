@@ -1,12 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Sample.Services.Users.Features.VerificationTokens;
+using Sample.Services.Users.Features.ActivationTokens;
 
 namespace Sample.Services.Users.Database.Configurations;
 
-public sealed class VerificationTokenConfiguration : IEntityTypeConfiguration<VerificationToken>
+public sealed class ActivationTokenConfiguration : IEntityTypeConfiguration<ActivationToken>
 {
-    public void Configure(EntityTypeBuilder<VerificationToken> builder)
+    public void Configure(EntityTypeBuilder<ActivationToken> builder)
     {
         builder.HasKey(x => x.Id);
 

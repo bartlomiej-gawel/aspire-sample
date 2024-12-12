@@ -22,7 +22,8 @@ public sealed class LoginUserEndpoint : Endpoint<LoginUserRequest, ErrorOr<Login
 
     public override void Configure()
     {
-        Post("api/users-service/users/login");
+        Post("login");
+        Group<UserEndpointsGroup>();
         AllowAnonymous();
     }
 

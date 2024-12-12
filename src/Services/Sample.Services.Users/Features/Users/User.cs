@@ -12,7 +12,7 @@ public sealed class User
     public string Email { get; set; } = null!;
     public string Phone { get; set; } = null!;
     public string Password { get; set; } = null!;
-    public UserStatus Status { get; set; }
+    public UserStatus Status { get; private set; }
     public DateTime CreatedAt { get; }
     public DateTime? UpdatedAt { get; private set; }
 

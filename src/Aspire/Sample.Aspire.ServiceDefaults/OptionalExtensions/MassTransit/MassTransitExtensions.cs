@@ -1,6 +1,7 @@
 using System.Reflection;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Sample.Aspire.ServiceDefaults.OptionalExtensions.MassTransit;
@@ -9,7 +10,7 @@ public static class MassTransitExtensions
 {
     public static IServiceCollection AddMassTransitConfiguration<TDbContext>(
         this IServiceCollection services,
-        MassTransitRabbitOptions options,
+        IConfiguration configuration,
         Assembly currentAssembly) where TDbContext : DbContext
     {
         services.AddMassTransit(configurator =>
@@ -18,11 +19,11 @@ public static class MassTransitExtensions
             configurator.UsingRabbitMq((context, rabbitmqConfigurator) =>
             {
                 rabbitmqConfigurator.Host(
-                    new Uri(options.Host),
+                    new Uri(configuration["Rabbit:Host"]!),
                     rabbitmqHostConfigurator =>
                     {
-                        rabbitmqHostConfigurator.Username(options.Username);
-                        rabbitmqHostConfigurator.Password(options.Password);
+                        rabbitmqHostConfigurator.Username(configuration["Rabbit:User"]!);
+                        rabbitmqHostConfigurator.Password(configuration["Rabbit:Password"]!);
                     });
                 rabbitmqConfigurator.ConfigureEndpoints(context);
             });

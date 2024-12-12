@@ -1,20 +1,20 @@
 using Sample.Services.Users.Features.Users;
 
-namespace Sample.Services.Users.Features.VerificationTokens;
+namespace Sample.Services.Users.Features.ActivationTokens;
 
-public sealed class VerificationToken
+public sealed class ActivationToken
 {
-    public Guid Id { get; set; }
-    public Guid UserId { get; set; }
+    public Guid Id { get; }
+    public Guid UserId { get; }
     public User User { get; init; } = null!;
-    public DateTime CreatedAt { get; set; }
-    public DateTime ExpireAt { get; set; }
+    public DateTime CreatedAt { get; }
+    public DateTime ExpireAt { get; }
 
-    private VerificationToken()
+    private ActivationToken()
     {
     }
 
-    private VerificationToken(
+    private ActivationToken(
         Guid userId,
         DateTime dateTime)
     {
@@ -24,11 +24,11 @@ public sealed class VerificationToken
         ExpireAt = dateTime.AddDays(1);
     }
 
-    public static VerificationToken Generate(
+    public static ActivationToken Generate(
         Guid userId,
         DateTime dateTime)
     {
-        return new VerificationToken(
+        return new ActivationToken(
             userId,
             dateTime);
     }

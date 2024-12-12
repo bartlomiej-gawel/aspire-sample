@@ -3,7 +3,7 @@ using FastEndpoints;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Sample.Services.Users.Database;
-using Sample.Services.Users.Features.VerificationTokens;
+using Sample.Services.Users.Features.ActivationTokens;
 using Sample.Shared.Messages.UsersService;
 using static Sample.Services.Users.Features.Users.User;
 
@@ -14,23 +14,24 @@ public sealed class RegisterUserEndpoint : Endpoint<RegisterUserRequest, ErrorOr
     private readonly UsersServiceDbContext _dbContext;
     private readonly IPublishEndpoint _publishEndpoint;
     private readonly TimeProvider _timeProvider;
-    private readonly VerificationTokenLinkFactory _verificationTokenLinkFactory;
+    private readonly ActivationTokenLinkFactory _activationTokenLinkFactory;
 
     public RegisterUserEndpoint(
         UsersServiceDbContext dbContext,
         IPublishEndpoint publishEndpoint,
         TimeProvider timeProvider,
-        VerificationTokenLinkFactory verificationTokenLinkFactory)
+        ActivationTokenLinkFactory activationTokenLinkFactory)
     {
         _dbContext = dbContext;
         _publishEndpoint = publishEndpoint;
         _timeProvider = timeProvider;
-        _verificationTokenLinkFactory = verificationTokenLinkFactory;
+        _activationTokenLinkFactory = activationTokenLinkFactory;
     }
 
     public override void Configure()
     {
-        Post("api/users-service/users/register");
+        Post("register");
+        Group<UserEndpointsGroup>();
         AllowAnonymous();
     }
 
@@ -58,16 +59,16 @@ public sealed class RegisterUserEndpoint : Endpoint<RegisterUserRequest, ErrorOr
             req.Phone,
             UserPasswordHasher.Hash(req.Password));
 
-        var verificationToken = VerificationToken.Generate(
+        var activationToken = ActivationToken.Generate(
             user.Id,
             _timeProvider.GetUtcNow().DateTime);
 
-        var verificationLinkCreateResult = _verificationTokenLinkFactory.CreateLink(verificationToken);
+        var verificationLinkCreateResult = _activationTokenLinkFactory.CreateLink(activationToken);
         if (verificationLinkCreateResult.IsError)
             return verificationLinkCreateResult.FirstError;
         
         await _dbContext.Users.AddAsync(user, ct);
-        await _dbContext.VerificationTokens.AddAsync(verificationToken, ct);
+        await _dbContext.ActivationTokens.AddAsync(activationToken, ct);
 
         await _publishEndpoint.Publish(new UserRegistered(
                 user.Id,

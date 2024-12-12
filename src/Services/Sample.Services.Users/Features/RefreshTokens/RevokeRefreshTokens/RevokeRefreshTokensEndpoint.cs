@@ -21,7 +21,8 @@ public sealed class RevokeRefreshTokensEndpoint : Endpoint<RevokeRefreshTokensRe
 
     public override void Configure()
     {
-        Delete("api/users-service/refresh-tokens/{UserId}/revoke");
+        Delete("{UserId}/revoke");
+        Group<RefreshTokenEndpointsGroup>();
         AllowAnonymous();
     }
 
