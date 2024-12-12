@@ -1,12 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Sample.Services.Users.Features.Users;
+using Sample.Services.Notifications.Features.Recipients;
 
-namespace Sample.Services.Users.Database.Configurations;
+namespace Sample.Services.Notifications.Database.Configurations;
 
-public sealed class UserConfiguration : IEntityTypeConfiguration<User>
+public sealed class RecipientConfiguration : IEntityTypeConfiguration<Recipient>
 {
-    public void Configure(EntityTypeBuilder<User> builder)
+    public void Configure(EntityTypeBuilder<Recipient> builder)
     {
         builder.HasKey(x => x.Id);
 
@@ -36,13 +36,6 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
         
         builder.Property(x => x.Phone)
             .HasMaxLength(15)
-            .IsRequired();
-        
-        builder.Property(x => x.Password)
-            .HasMaxLength(255)
-            .IsRequired();
-
-        builder.Property(x => x.Status)
             .IsRequired();
 
         builder.Property(x => x.CreatedAt)

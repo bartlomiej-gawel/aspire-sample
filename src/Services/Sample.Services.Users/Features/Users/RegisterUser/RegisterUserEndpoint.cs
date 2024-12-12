@@ -63,9 +63,9 @@ public sealed class RegisterUserEndpoint : Endpoint<RegisterUserRequest, ErrorOr
             user.Id,
             _timeProvider.GetUtcNow().DateTime);
 
-        var verificationLinkCreateResult = _activationTokenLinkFactory.CreateLink(activationToken);
-        if (verificationLinkCreateResult.IsError)
-            return verificationLinkCreateResult.FirstError;
+        var activationLinkCreateResult = _activationTokenLinkFactory.CreateLink(activationToken);
+        if (activationLinkCreateResult.IsError)
+            return activationLinkCreateResult.FirstError;
         
         await _dbContext.Users.AddAsync(user, ct);
         await _dbContext.ActivationTokens.AddAsync(activationToken, ct);
@@ -78,7 +78,7 @@ public sealed class RegisterUserEndpoint : Endpoint<RegisterUserRequest, ErrorOr
                 user.Phone,
                 user.OrganizationId,
                 user.OrganizationName,
-                verificationLinkCreateResult.Value),
+                activationLinkCreateResult.Value),
             ct);
 
         await _dbContext.SaveChangesAsync(ct);

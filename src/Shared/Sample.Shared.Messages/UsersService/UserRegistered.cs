@@ -8,4 +8,4 @@ public sealed record UserRegistered(
     string UserPhone,
     Guid OrganizationId,
     string OrganizationName,
-    string VerificationLink);
+    string ActivationLink);
