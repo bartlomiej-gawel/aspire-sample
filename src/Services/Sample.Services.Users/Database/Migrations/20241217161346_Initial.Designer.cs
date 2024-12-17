@@ -12,7 +12,7 @@ using Sample.Services.Users.Database;
 namespace Sample.Services.Users.Database.Migrations
 {
     [DbContext(typeof(UsersServiceDbContext))]
-    [Migration("20241212184042_Initial")]
+    [Migration("20241217161346_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -243,7 +243,6 @@ namespace Sample.Services.Users.Database.Migrations
             modelBuilder.Entity("Sample.Services.Users.Features.Users.User", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
@@ -260,7 +259,6 @@ namespace Sample.Services.Users.Database.Migrations
                         .HasColumnType("character varying(255)");
 
                     b.Property<Guid>("OrganizationId")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<string>("OrganizationName")

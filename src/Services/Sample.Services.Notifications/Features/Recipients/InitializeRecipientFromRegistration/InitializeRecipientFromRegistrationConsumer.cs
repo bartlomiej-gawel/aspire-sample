@@ -1,4 +1,4 @@
-using FluentEmail.Core;
+using FastEndpoints;
 using MassTransit;
 using Sample.Services.Notifications.Database;
 using Sample.Shared.Messages.UsersService;
@@ -9,16 +9,13 @@ public sealed class InitializeRecipientFromRegistrationConsumer : IConsumer<User
 {
     private readonly ILogger<InitializeRecipientFromRegistrationConsumer> _logger;
     private readonly NotificationsServiceDbContext _dbContext;
-    private readonly IFluentEmail _fluentEmail;
 
     public InitializeRecipientFromRegistrationConsumer(
         ILogger<InitializeRecipientFromRegistrationConsumer> logger,
-        NotificationsServiceDbContext dbContext,
-        IFluentEmail fluentEmail)
+        NotificationsServiceDbContext dbContext)
     {
         _logger = logger;
         _dbContext = dbContext;
-        _fluentEmail = fluentEmail;
     }
 
     public async Task Consume(ConsumeContext<UserRegistered> context)
@@ -38,19 +35,13 @@ public sealed class InitializeRecipientFromRegistrationConsumer : IConsumer<User
             
             await _dbContext.Recipients.AddAsync(recipient);
             await _dbContext.SaveChangesAsync();
+
+            await new RecipientInitializedEvent
+            {
+                
+            }.PublishAsync();
             
             _logger.LogInformation("Notifier initialized successfully.");
-            
-            var emailResult = await _fluentEmail
-                .To(recipient.Email)
-                .Subject("Activate account for aspire sample")
-                .Body($"To activate your account <a href='{context.Message.ActivationLink}'>click here</a>", isHtml: true)
-                .SendAsync();
-
-            if (emailResult.Successful)
-                _logger.LogInformation("Email sent successfully.");
-            else
-                _logger.LogError("Email sending failed.");
         }
         catch (Exception exception)
         {

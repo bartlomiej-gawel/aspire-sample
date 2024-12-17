@@ -7,11 +7,11 @@ using Sample.Services.Users.Features.Users;
 
 namespace Sample.Services.Users.Shared;
 
-public abstract class TokenProvider
+public sealed class TokenProvider
 {
     private readonly IConfiguration _configuration;
 
-    protected TokenProvider(IConfiguration configuration)
+    public TokenProvider(IConfiguration configuration)
     {
         _configuration = configuration;
     }

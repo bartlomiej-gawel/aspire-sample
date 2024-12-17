@@ -2,12 +2,12 @@ using ErrorOr;
 
 namespace Sample.Services.Users.Features.ActivationTokens;
 
-public abstract class ActivationTokenLinkFactory
+public sealed class ActivationTokenLinkFactory
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly LinkGenerator _linkGenerator;
 
-    protected ActivationTokenLinkFactory(
+    public ActivationTokenLinkFactory(
         IHttpContextAccessor httpContextAccessor,
         LinkGenerator linkGenerator)
     {

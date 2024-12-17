@@ -38,4 +38,18 @@ public sealed class Location
             locationId,
             organizationId);
     }
+    
+    public void Update(
+        string name,
+        string street,
+        string city,
+        string postalCode)
+    {
+        Name = name;
+        Address.Update(
+            street,
+            city,
+            postalCode);
+        UpdatedAt = DateTime.UtcNow;
+    }
 }
