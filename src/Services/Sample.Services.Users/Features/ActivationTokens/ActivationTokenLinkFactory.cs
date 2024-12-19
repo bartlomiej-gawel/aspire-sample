@@ -21,9 +21,9 @@ public sealed class ActivationTokenLinkFactory
         if (httpContext is null)
             return ActivationTokenErrors.HttpContextNotAvailable;
 
-        var activationLink = _linkGenerator.GetUriByRouteValues(
+        var activationLink = _linkGenerator.GetUriByName(
             httpContext,
-            routeName: null,
+            "ActivateUser",
             values: new { ActivationToken = activationToken.Id });
 
         if (activationLink is null)

@@ -28,6 +28,7 @@ public sealed class ActivateUserEndpoint : Endpoint<ActivateUserRequest, ErrorOr
         Put("{ActivationToken}/activate");
         Group<ActivationTokenEndpointsGroup>();
         AllowAnonymous();
+        Description(x => x.WithName("ActivateUser"), clearDefaults: true);
     }
 
     public override async Task<ErrorOr<IResult>> ExecuteAsync(ActivateUserRequest req, CancellationToken ct)
@@ -36,7 +37,9 @@ public sealed class ActivateUserEndpoint : Endpoint<ActivateUserRequest, ErrorOr
             .Include(x => x.User)
             .FirstOrDefaultAsync(x => x.Id == req.ActivationToken, ct);
 
-        if (activationToken is null || activationToken.ExpireAt < _timeProvider.GetUtcNow().DateTime)
+        var now = _timeProvider.GetUtcNow().DateTime.ToUniversalTime();
+        
+        if (activationToken is null || activationToken.ExpireAt < now)
             return ActivationTokenErrors.TokenExpired;
 
         var userActivationResult = activationToken.User.Activate();

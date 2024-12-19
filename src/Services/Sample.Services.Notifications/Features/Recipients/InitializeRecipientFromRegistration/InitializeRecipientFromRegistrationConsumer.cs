@@ -38,7 +38,10 @@ public sealed class InitializeRecipientFromRegistrationConsumer : IConsumer<User
 
             await new RecipientInitializedEvent
             {
-                
+                Name = recipient.Name,
+                Surname = recipient.Surname,
+                Email = recipient.Email,
+                ActivationLink = context.Message.ActivationLink
             }.PublishAsync();
             
             _logger.LogInformation("Notifier initialized successfully.");

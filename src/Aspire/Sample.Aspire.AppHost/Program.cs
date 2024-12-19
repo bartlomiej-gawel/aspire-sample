@@ -6,7 +6,8 @@ var postgresUsername = builder.AddParameter("postgres-username", true);
 var postgresPassword = builder.AddParameter("postgres-password", true);
 var postgres = builder.AddPostgres("sample-postgres", postgresUsername, postgresPassword)
     .WithDataVolume(isReadOnly: false)
-    .WithLifetime(ContainerLifetime.Persistent);
+    .WithLifetime(ContainerLifetime.Persistent)
+    .WithPgAdmin();
 
 var rabbitmqUsername = builder.AddParameter("rabbitmq-username", true);
 var rabbitmqPassword = builder.AddParameter("rabbitmq-password", true);
@@ -14,12 +15,12 @@ var rabbitmq = builder.AddRabbitMQ("sample-rabbitmq", rabbitmqUsername, rabbitmq
     .WithLifetime(ContainerLifetime.Persistent)
     .WithManagementPlugin();
 
-// var notificationsServiceDb = postgres.AddDatabase("sample-notifications-service-db");
-// var notificationsService = builder.AddProject<Sample_Services_Notifications>("sample-notifications-service")
-//     .WaitFor(notificationsServiceDb)
-//     .WaitFor(rabbitmq)
-//     .WithReference(notificationsServiceDb)
-//     .WithEnvironment("Rabbit__Host", rabbitmq.Resource.ConnectionStringExpression);
+var notificationsServiceDb = postgres.AddDatabase("sample-notifications-service-db");
+var notificationsService = builder.AddProject<Sample_Services_Notifications>("sample-notifications-service")
+    .WaitFor(notificationsServiceDb)
+    .WaitFor(rabbitmq)
+    .WithReference(notificationsServiceDb)
+    .WithEnvironment("Rabbit__Host", rabbitmq.Resource.ConnectionStringExpression);
 
 // var organizationsServiceDb = postgres.AddDatabase("sample-organizations-service-db");
 // var organizationsService = builder.AddProject<Sample_Services_Organizations>("sample-organizations-service")

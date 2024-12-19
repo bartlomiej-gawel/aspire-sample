@@ -4,11 +4,14 @@ using Sample.Aspire.ServiceDefaults.OptionalExtensions.Database;
 using Sample.Aspire.ServiceDefaults.OptionalExtensions.FastEndpoints;
 using Sample.Aspire.ServiceDefaults.OptionalExtensions.MassTransit;
 using Sample.Services.Notifications.Database;
+using Sample.Services.Notifications.Features.Shared;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 builder.AddNpgsqlDbContext<NotificationsServiceDbContext>("sample-notifications-service-db");
+
+builder.Services.AddTransient<EmailSender>();
 
 builder.Services.AddFastEndpointsConfiguration();
 builder.Services.AddFastEndpointsSwaggerDocumentation();
@@ -17,11 +20,11 @@ builder.Services.AddMassTransitConfiguration<NotificationsServiceDbContext>(buil
 var app = builder.Build();
 
 app.UseServiceDefaults();
-// app.UseFastEndpointsConfiguration();
+app.UseFastEndpointsConfiguration();
 
 if (app.Environment.IsDevelopment())
 {
-    // app.UseFastEndpointsSwaggerDocumentation();
+    app.UseFastEndpointsSwaggerDocumentation();
     await app.RunDatabaseMigrationsAsync<NotificationsServiceDbContext>();
 }
 

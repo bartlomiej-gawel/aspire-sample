@@ -59,9 +59,11 @@ public sealed class RegisterUserEndpoint : Endpoint<RegisterUserRequest, ErrorOr
             req.Phone,
             UserPasswordHasher.Hash(req.Password));
 
+        var now = _timeProvider.GetUtcNow().DateTime.ToUniversalTime();
+        
         var activationToken = ActivationToken.Generate(
             user.Id,
-            _timeProvider.GetUtcNow().DateTime);
+            now);
 
         var activationLinkCreateResult = _activationTokenLinkFactory.CreateLink(activationToken);
         if (activationLinkCreateResult.IsError)
