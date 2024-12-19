@@ -1,8 +1,6 @@
 using System.Reflection;
 using Sample.Aspire.ServiceDefaults;
-using Sample.Aspire.ServiceDefaults.OptionalExtensions.Database;
-using Sample.Aspire.ServiceDefaults.OptionalExtensions.FastEndpoints;
-using Sample.Aspire.ServiceDefaults.OptionalExtensions.MassTransit;
+using Sample.Aspire.ServiceDefaults.Extensions;
 using Sample.Services.Users.Database;
 using Sample.Services.Users.Features.ActivationTokens;
 using Sample.Services.Users.Shared;

@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Sample.Aspire.ServiceDefaults.CoreExtensions;
+using Sample.Aspire.ServiceDefaults.Extensions;
 
 namespace Sample.Aspire.ServiceDefaults;
 
-public static class Extensions
+public static class ServiceConfiguration
 {
     public static IHostApplicationBuilder AddServiceDefaults(this IHostApplicationBuilder builder)
     {

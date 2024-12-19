@@ -1,8 +1,6 @@
 using System.Reflection;
 using Sample.Aspire.ServiceDefaults;
-using Sample.Aspire.ServiceDefaults.OptionalExtensions.Database;
 using Sample.Aspire.ServiceDefaults.OptionalExtensions.FastEndpoints;
-using Sample.Aspire.ServiceDefaults.OptionalExtensions.MassTransit;
 using Sample.Services.Notifications.Database;
 using Sample.Services.Notifications.Features.Shared;
 

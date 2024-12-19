@@ -1,7 +1,5 @@
 using System.Reflection;
 using Sample.Aspire.ServiceDefaults;
-using Sample.Aspire.ServiceDefaults.OptionalExtensions.Database;
-using Sample.Aspire.ServiceDefaults.OptionalExtensions.MassTransit;
 using Sample.Services.Organizations.Database;
 
 var builder = WebApplication.CreateBuilder(args);
