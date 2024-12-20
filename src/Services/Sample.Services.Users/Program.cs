@@ -1,6 +1,7 @@
 using System.Reflection;
+using FluentValidation;
 using Sample.Aspire.ServiceDefaults;
-using Sample.Aspire.ServiceDefaults.Extensions;
+using Sample.Aspire.ServiceDefaults.ExtensionsToRegister;
 using Sample.Services.Users.Database;
 using Sample.Services.Users.Features.ActivationTokens;
 using Sample.Services.Users.Shared;
@@ -15,18 +16,15 @@ builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddScoped<TokenProvider>();
 builder.Services.AddScoped<ActivationTokenLinkFactory>();
 
-builder.Services.AddFastEndpointsConfiguration();
-builder.Services.AddFastEndpointsSwaggerDocumentation();
+builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 builder.Services.AddMassTransitConfiguration<UsersServiceDbContext>(builder.Configuration, Assembly.GetExecutingAssembly());
 
 var app = builder.Build();
 
 app.UseServiceDefaults();
-app.UseFastEndpointsConfiguration();
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseFastEndpointsSwaggerDocumentation();
     await app.RunDatabaseMigrationsAsync<UsersServiceDbContext>();
 }
 

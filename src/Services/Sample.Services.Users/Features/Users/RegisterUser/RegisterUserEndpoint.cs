@@ -1,90 +1,80 @@
-using ErrorOr;
-using FastEndpoints;
+using FluentValidation;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Sample.Services.Users.Database;
 using Sample.Services.Users.Features.ActivationTokens;
 using Sample.Shared.Messages.UsersService;
-using static Sample.Services.Users.Features.Users.User;
 
 namespace Sample.Services.Users.Features.Users.RegisterUser;
 
-public sealed class RegisterUserEndpoint : Endpoint<RegisterUserRequest, ErrorOr<IResult>>
+public static class RegisterUserEndpoint
 {
-    private readonly UsersServiceDbContext _dbContext;
-    private readonly IPublishEndpoint _publishEndpoint;
-    private readonly TimeProvider _timeProvider;
-    private readonly ActivationTokenLinkFactory _activationTokenLinkFactory;
-
-    public RegisterUserEndpoint(
-        UsersServiceDbContext dbContext,
-        IPublishEndpoint publishEndpoint,
-        TimeProvider timeProvider,
-        ActivationTokenLinkFactory activationTokenLinkFactory)
+    public static IEndpointRouteBuilder MapEndpoint(this IEndpointRouteBuilder builder)
     {
-        _dbContext = dbContext;
-        _publishEndpoint = publishEndpoint;
-        _timeProvider = timeProvider;
-        _activationTokenLinkFactory = activationTokenLinkFactory;
-    }
+        builder.MapPost("api/users-service/users/register", async (
+                RegisterUserRequest request,
+                IValidator<RegisterUserRequest> validator,
+                UsersServiceDbContext dbContext,
+                IPublishEndpoint publishEndpoint,
+                ActivationTokenLinkFactory activationTokenLinkFactory,
+                CancellationToken cancellationToken) =>
+            {
+                var validationResult = await validator.ValidateAsync(request, cancellationToken);
+                if (!validationResult.IsValid)
+                    return Results.ValidationProblem(validationResult.ToDictionary());
 
-    public override void Configure()
-    {
-        Post("register");
-        Group<UserEndpointsGroup>();
-        AllowAnonymous();
-    }
+                var existingUser = await dbContext.Users
+                    .Where(x => x.OrganizationName == request.OrganizationName || x.Email == request.Email)
+                    .Select(x => new { x.OrganizationName, x.Email })
+                    .FirstOrDefaultAsync(cancellationToken);
 
-    public override async Task<ErrorOr<IResult>> ExecuteAsync(RegisterUserRequest req, CancellationToken ct)
-    {
-        var existingUser = await _dbContext.Users
-            .Where(x => x.OrganizationName == req.OrganizationName || x.Email == req.Email)
-            .Select(x => new { x.OrganizationName, x.Email })
-            .FirstOrDefaultAsync(ct);
+                if (existingUser != null)
+                {
+                    if (existingUser.OrganizationName == request.OrganizationName)
+                        return Results.BadRequest("Organization name already exists.");
 
-        if (existingUser != null)
-        {
-            if (existingUser.OrganizationName == req.OrganizationName)
-                return UserErrors.OrganizationNameAlreadyExists;
+                    if (existingUser.Email == request.Email)
+                        return Results.BadRequest("Email already exists.");
+                }
 
-            if (existingUser.Email == req.Email)
-                return UserErrors.EmailAlreadyExists;
-        }
+                var hashedPassword = UserPasswordHasher.Hash(request.Password);
+                if (string.IsNullOrEmpty(hashedPassword))
+                    return Results.BadRequest("Provided password is invalid.");
 
-        var user = Register(
-            req.OrganizationName,
-            req.Name,
-            req.Surname,
-            req.Email,
-            req.Phone,
-            UserPasswordHasher.Hash(req.Password));
+                var user = User.Register(
+                    request.OrganizationName,
+                    request.Name,
+                    request.Surname,
+                    request.Email,
+                    request.Phone,
+                    hashedPassword);
 
-        var now = _timeProvider.GetUtcNow().DateTime.ToUniversalTime();
-        
-        var activationToken = ActivationToken.Generate(
-            user.Id,
-            now);
+                var activationToken = ActivationToken.Generate(user.Id);
+                var activationLink = activationTokenLinkFactory.CreateLink(activationToken);
+                if (string.IsNullOrEmpty(activationLink))
+                    return Results.BadRequest("Failed to create activation link.");
 
-        var activationLinkCreateResult = _activationTokenLinkFactory.CreateLink(activationToken);
-        if (activationLinkCreateResult.IsError)
-            return activationLinkCreateResult.FirstError;
-        
-        await _dbContext.Users.AddAsync(user, ct);
-        await _dbContext.ActivationTokens.AddAsync(activationToken, ct);
+                await dbContext.Users.AddAsync(user, cancellationToken);
+                await dbContext.ActivationTokens.AddAsync(activationToken, cancellationToken);
 
-        await _publishEndpoint.Publish(new UserRegistered(
-                user.Id,
-                user.Name,
-                user.Surname,
-                user.Email,
-                user.Phone,
-                user.OrganizationId,
-                user.OrganizationName,
-                activationLinkCreateResult.Value),
-            ct);
+                await publishEndpoint.Publish(new UserRegistered(
+                        user.Id,
+                        user.Name,
+                        user.Surname,
+                        user.Email,
+                        user.Phone,
+                        user.OrganizationId,
+                        user.OrganizationName,
+                        activationLink),
+                    cancellationToken);
 
-        await _dbContext.SaveChangesAsync(ct);
+                await dbContext.SaveChangesAsync(cancellationToken);
 
-        return TypedResults.Ok();
+                return Results.Ok();
+            })
+            .AllowAnonymous()
+            .WithName("register-user");
+
+        return builder;
     }
 }

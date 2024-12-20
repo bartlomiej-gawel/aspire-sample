@@ -18,7 +18,7 @@ public static class ServiceConfiguration
             http.AddStandardResilienceHandler();
             http.AddServiceDiscovery();
         });
-
+        
         return builder;
     }
 

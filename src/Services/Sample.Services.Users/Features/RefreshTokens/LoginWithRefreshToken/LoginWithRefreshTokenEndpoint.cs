@@ -1,51 +1,54 @@
-using ErrorOr;
-using FastEndpoints;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Sample.Services.Users.Database;
 using Sample.Services.Users.Shared;
 
 namespace Sample.Services.Users.Features.RefreshTokens.LoginWithRefreshToken;
 
-public sealed class LoginWithRefreshTokenEndpoint : Endpoint<LoginWithRefreshTokenRequest, ErrorOr<LoginWithRefreshTokenResponse>>
+public static class LoginWithRefreshTokenEndpoint
 {
-    private readonly UsersServiceDbContext _dbContext;
-    private readonly TokenProvider _tokenProvider;
-    private readonly TimeProvider _timeProvider;
-
-    public LoginWithRefreshTokenEndpoint(
-        UsersServiceDbContext dbContext,
-        TokenProvider tokenProvider,
-        TimeProvider timeProvider)
+    public static IEndpointRouteBuilder MapEndpoint(this IEndpointRouteBuilder builder)
     {
-        _dbContext = dbContext;
-        _tokenProvider = tokenProvider;
-        _timeProvider = timeProvider;
-    }
+        builder.MapPost("api/users-service/refresh-tokens/login", async (
+                LoginWithRefreshTokenRequest request,
+                IValidator<LoginWithRefreshTokenRequest> validator,
+                UsersServiceDbContext dbContext,
+                TokenProvider tokenProvider,
+                TimeProvider timeProvider,
+                CancellationToken cancellationToken) =>
+            {
+                var validationResult = await validator.ValidateAsync(request, cancellationToken);
+                if (!validationResult.IsValid)
+                    return Results.ValidationProblem(validationResult.ToDictionary());
 
-    public override void Configure()
-    {
-        Post("login");
-        Group<RefreshTokenEndpointsGroup>();
-        AllowAnonymous();
-    }
+                var refreshToken = await dbContext.RefreshTokens
+                    .Include(x => x.User)
+                    .FirstOrDefaultAsync(x => x.Value == request.RefreshToken, cancellationToken);
 
-    public override async Task<ErrorOr<LoginWithRefreshTokenResponse>> ExecuteAsync(LoginWithRefreshTokenRequest req, CancellationToken ct)
-    {
-        var refreshToken = await _dbContext.RefreshTokens
-            .Include(x => x.User)
-            .FirstOrDefaultAsync(x => x.Value == req.RefreshToken, ct);
-        
-        if (refreshToken is null || refreshToken.ExpireAt < _timeProvider.GetUtcNow().DateTime)
-            return RefreshTokenErrors.AlreadyExpired;
-        
-        refreshToken.Update(TokenProvider.GenerateRefreshToken());
-        
-        await _dbContext.SaveChangesAsync(ct);
+                if (refreshToken is null || refreshToken.ExpireAt < timeProvider.GetUtcNow().DateTime.ToUniversalTime())
+                    return Results.BadRequest("Refresh token is invalid or expired.");
 
-        return new LoginWithRefreshTokenResponse
-        {
-            AccessToken = _tokenProvider.GenerateAccessToken(refreshToken.User),
-            RefreshToken = refreshToken.Value
-        };
+                var refreshTokenValue = TokenProvider.GenerateRefreshToken();
+                if (string.IsNullOrEmpty(refreshTokenValue))
+                    return Results.BadRequest("Failed to generate refresh token.");
+
+                var accessTokenValue = tokenProvider.GenerateAccessToken(refreshToken.User);
+                if (string.IsNullOrEmpty(accessTokenValue))
+                    return Results.BadRequest("Failed to generate access token.");
+
+                refreshToken.Update(refreshTokenValue);
+
+                await dbContext.SaveChangesAsync(cancellationToken);
+
+                return Results.Ok(new LoginWithRefreshTokenResponse
+                {
+                    AccessToken = accessTokenValue,
+                    RefreshToken = refreshTokenValue
+                });
+            })
+            .AllowAnonymous()
+            .WithName("login-with-refresh-token");
+
+        return builder;
     }
 }

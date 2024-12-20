@@ -1,5 +1,4 @@
-using ErrorOr;
-using FastEndpoints;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Sample.Services.Users.Database;
 using Sample.Services.Users.Features.RefreshTokens;
@@ -7,50 +6,56 @@ using Sample.Services.Users.Shared;
 
 namespace Sample.Services.Users.Features.Users.LoginUser;
 
-public sealed class LoginUserEndpoint : Endpoint<LoginUserRequest, ErrorOr<LoginUserResponse>>
+public static class LoginUserEndpoint
 {
-    private readonly UsersServiceDbContext _dbContext;
-    private readonly TokenProvider _tokenProvider;
-
-    public LoginUserEndpoint(
-        UsersServiceDbContext dbContext,
-        TokenProvider tokenProvider)
+    public static IEndpointRouteBuilder MapEndpoint(this IEndpointRouteBuilder builder)
     {
-        _dbContext = dbContext;
-        _tokenProvider = tokenProvider;
-    }
+        builder.MapPost("api/users-service/users/login", async (
+                LoginUserRequest request,
+                IValidator<LoginUserRequest> validator,
+                UsersServiceDbContext dbContext,
+                TokenProvider tokenProvider,
+                CancellationToken cancellationToken) =>
+            {
+                var validationResult = await validator.ValidateAsync(request, cancellationToken);
+                if (!validationResult.IsValid)
+                    return Results.ValidationProblem(validationResult.ToDictionary());
 
-    public override void Configure()
-    {
-        Post("login");
-        Group<UserEndpointsGroup>();
-        AllowAnonymous();
-    }
+                var user = await dbContext.Users.FirstOrDefaultAsync(x => x.Email == request.Email, cancellationToken);
+                if (user is null)
+                    return Results.NotFound("User with provided email was not found.");
 
-    public override async Task<ErrorOr<LoginUserResponse>> ExecuteAsync(LoginUserRequest req, CancellationToken ct)
-    {
-        var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Email == req.Email, ct);
-        if (user is null)
-            return UserErrors.NotFound;
+                if (user.Status != UserStatus.Active)
+                    return Results.BadRequest("User is not activated.");
 
-        if (user.Status != UserStatus.Active)
-            return UserErrors.NotActivated;
+                var isPasswordVerified = UserPasswordHasher.Verify(request.Password, user.Password);
+                if (!isPasswordVerified)
+                    return Results.BadRequest("Provided password is incorrect.");
 
-        var isPasswordVerified = UserPasswordHasher.Verify(req.Password, user.Password);
-        if (!isPasswordVerified)
-            return UserErrors.IncorrectPassword;
+                var accessTokenValue = tokenProvider.GenerateAccessToken(user);
+                if (string.IsNullOrEmpty(accessTokenValue))
+                    return Results.BadRequest("Failed to generate access token.");
+                
+                var refreshTokenValue = TokenProvider.GenerateRefreshToken();
+                if (string.IsNullOrEmpty(refreshTokenValue))
+                    return Results.BadRequest("Failed to generate refresh token.");
 
-        var refreshToken = RefreshToken.Create(
-            user.Id,
-            TokenProvider.GenerateRefreshToken());
+                var refreshToken = RefreshToken.Create(
+                    user.Id,
+                    refreshTokenValue);
 
-        await _dbContext.RefreshTokens.AddAsync(refreshToken, ct);
-        await _dbContext.SaveChangesAsync(ct);
+                await dbContext.RefreshTokens.AddAsync(refreshToken, cancellationToken);
+                await dbContext.SaveChangesAsync(cancellationToken);
 
-        return new LoginUserResponse
-        {
-            AccessToken = _tokenProvider.GenerateAccessToken(user),
-            RefreshToken = refreshToken.Value
-        };
+                return Results.Ok(new LoginUserResponse
+                {
+                    AccessToken = accessTokenValue,
+                    RefreshToken = refreshTokenValue
+                });
+            })
+            .AllowAnonymous()
+            .WithName("login-user");
+
+        return builder;
     }
 }

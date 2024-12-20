@@ -1,5 +1,3 @@
-using ErrorOr;
-using FastEndpoints;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Sample.Services.Users.Database;
@@ -7,54 +5,43 @@ using Sample.Shared.Messages.UsersService;
 
 namespace Sample.Services.Users.Features.ActivationTokens.ActivateUser;
 
-public sealed class ActivateUserEndpoint : Endpoint<ActivateUserRequest, ErrorOr<IResult>>
+public static class ActivateUserEndpoint
 {
-    private readonly UsersServiceDbContext _dbContext;
-    private readonly TimeProvider _timeProvider;
-    private readonly IPublishEndpoint _publishEndpoint;
-
-    public ActivateUserEndpoint(
-        UsersServiceDbContext dbContext,
-        TimeProvider timeProvider,
-        IPublishEndpoint publishEndpoint)
+    public static IEndpointRouteBuilder MapEndpoint(this IEndpointRouteBuilder builder)
     {
-        _dbContext = dbContext;
-        _timeProvider = timeProvider;
-        _publishEndpoint = publishEndpoint;
-    }
+        builder.MapPut("api/users-service/activation-tokens/{activationToken:guid}/activate-user", async (
+                Guid activationToken,
+                UsersServiceDbContext dbContext,
+                TimeProvider timeProvider,
+                IPublishEndpoint publishEndpoint,
+                CancellationToken cancellationToken) =>
+            {
+                var userActivationToken = await dbContext.ActivationTokens
+                    .Include(x => x.User)
+                    .FirstOrDefaultAsync(x => x.Id == activationToken, cancellationToken);
 
-    public override void Configure()
-    {
-        Put("{ActivationToken}/activate");
-        Group<ActivationTokenEndpointsGroup>();
-        AllowAnonymous();
-        Description(x => x.WithName("ActivateUser"), clearDefaults: true);
-    }
+                if (userActivationToken is null)
+                    return Results.BadRequest("Invalid activation token.");
 
-    public override async Task<ErrorOr<IResult>> ExecuteAsync(ActivateUserRequest req, CancellationToken ct)
-    {
-        var activationToken = await _dbContext.ActivationTokens
-            .Include(x => x.User)
-            .FirstOrDefaultAsync(x => x.Id == req.ActivationToken, ct);
+                if (userActivationToken.ExpireAt < timeProvider.GetUtcNow().DateTime.ToUniversalTime())
+                    return Results.BadRequest("Activation token is expired.");
 
-        var now = _timeProvider.GetUtcNow().DateTime.ToUniversalTime();
-        
-        if (activationToken is null || activationToken.ExpireAt < now)
-            return ActivationTokenErrors.TokenExpired;
+                userActivationToken.User.Activate();
 
-        var userActivationResult = activationToken.User.Activate();
-        if (userActivationResult.IsError)
-            return userActivationResult.FirstError;
+                dbContext.ActivationTokens.Remove(userActivationToken);
 
-        _dbContext.ActivationTokens.Remove(activationToken);
+                await publishEndpoint.Publish(new UserRegistrationConfirmed(
+                        userActivationToken.User.Id,
+                        userActivationToken.User.OrganizationId),
+                    cancellationToken);
 
-        await _publishEndpoint.Publish(new UserRegistrationConfirmed(
-                activationToken.User.Id,
-                activationToken.User.OrganizationId),
-            ct);
+                await dbContext.SaveChangesAsync(cancellationToken);
 
-        await _dbContext.SaveChangesAsync(ct);
+                return Results.Ok();
+            })
+            .AllowAnonymous()
+            .WithName("activate-user");
 
-        return TypedResults.Ok();
+        return builder;
     }
 }

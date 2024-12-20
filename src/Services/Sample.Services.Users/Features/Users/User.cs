@@ -1,17 +1,15 @@
-using ErrorOr;
-
 namespace Sample.Services.Users.Features.Users;
 
 public sealed class User
 {
     public Guid Id { get; }
     public Guid OrganizationId { get; }
-    public string OrganizationName { get; set; } = null!;
-    public string Name { get; set; } = null!;
-    public string Surname { get; set; } = null!;
-    public string Email { get; set; } = null!;
-    public string Phone { get; set; } = null!;
-    public string Password { get; set; } = null!;
+    public string OrganizationName { get; private set; } = null!;
+    public string Name { get; private set; } = null!;
+    public string Surname { get; private set; } = null!;
+    public string Email { get; private set; } = null!;
+    public string Phone { get; private set; } = null!;
+    public string Password { get; private set; } = null!;
     public UserStatus Status { get; private set; }
     public DateTime CreatedAt { get; }
     public DateTime? UpdatedAt { get; private set; }
@@ -57,15 +55,10 @@ public sealed class User
             phone,
             password);
     }
-    
-    public ErrorOr<Success> Activate()
+
+    public void Activate()
     {
-        if (Status == UserStatus.Active)
-            return UserErrors.AlreadyActivated;
-        
         Status = UserStatus.Active;
         UpdatedAt = DateTime.UtcNow;
-        
-        return Result.Success;
     }
 }

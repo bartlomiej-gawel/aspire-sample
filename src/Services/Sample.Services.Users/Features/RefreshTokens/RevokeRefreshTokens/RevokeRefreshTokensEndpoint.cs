@@ -1,48 +1,40 @@
 using System.Security.Claims;
-using ErrorOr;
-using FastEndpoints;
 using Microsoft.EntityFrameworkCore;
 using Sample.Services.Users.Database;
 
 namespace Sample.Services.Users.Features.RefreshTokens.RevokeRefreshTokens;
 
-public sealed class RevokeRefreshTokensEndpoint : Endpoint<RevokeRefreshTokensRequest, ErrorOr<IResult>>
+public static class RevokeRefreshTokensEndpoint
 {
-    private readonly UsersServiceDbContext _dbContext;
-    private readonly IHttpContextAccessor _httpContextAccessor;
-
-    public RevokeRefreshTokensEndpoint(
-        UsersServiceDbContext dbContext,
-        IHttpContextAccessor httpContextAccessor)
+    public static IEndpointRouteBuilder MapEndpoint(this IEndpointRouteBuilder builder)
     {
-        _dbContext = dbContext;
-        _httpContextAccessor = httpContextAccessor;
+        builder.MapDelete("api/users-service/refresh-tokens/{userId:guid}/revoke", async (
+                Guid userId,
+                UsersServiceDbContext dbContext,
+                IHttpContextAccessor httpContextAccessor,
+                CancellationToken cancellationToken) =>
+            {
+                var currentUserId = GetCurrentUserId(httpContextAccessor);
+                if (currentUserId != userId)
+                    return Results.Unauthorized();
+
+                await dbContext.RefreshTokens
+                    .Where(x => x.UserId == userId)
+                    .ExecuteDeleteAsync(cancellationToken);
+
+                return Results.Ok();
+            })
+            .AllowAnonymous()
+            .WithName("revoke-refresh-tokens");
+
+        return builder;
     }
 
-    public override void Configure()
+    private static Guid? GetCurrentUserId(IHttpContextAccessor httpContextAccessor)
     {
-        Delete("{UserId}/revoke");
-        Group<RefreshTokenEndpointsGroup>();
-        AllowAnonymous();
-    }
-
-    public override async Task<ErrorOr<IResult>> ExecuteAsync(RevokeRefreshTokensRequest req, CancellationToken ct)
-    {
-        if (req.UserId != GetCurrentUserId())
-            return RefreshTokenErrors.UnauthorizedRevoke;
-        
-        await _dbContext.RefreshTokens
-            .Where(x => x.UserId == req.UserId)
-            .ExecuteDeleteAsync(ct);
-
-        return TypedResults.Ok();
-    }
-
-    private Guid? GetCurrentUserId()
-    {
-        return Guid.TryParse(_httpContextAccessor.HttpContext?.User
+        return Guid.TryParse(httpContextAccessor.HttpContext?.User
             .FindFirstValue(ClaimTypes.NameIdentifier), out var userId)
-                ? userId
-                : null;
+            ? userId
+            : null;
     }
 }

@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Sample.Aspire.ServiceDefaults.Extensions;
+namespace Sample.Aspire.ServiceDefaults.ExtensionsToRegister;
 
 public static class DatabaseMigrationExtensions
 {
