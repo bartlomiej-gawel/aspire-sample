@@ -7,7 +7,7 @@ namespace Sample.Services.Users.Features.RefreshTokens.LoginWithRefreshToken;
 
 public static class LoginWithRefreshTokenEndpoint
 {
-    public static IEndpointRouteBuilder MapEndpoint(this IEndpointRouteBuilder builder)
+    public static IEndpointRouteBuilder MapLoginWithRefreshTokenEndpoint(this IEndpointRouteBuilder builder)
     {
         builder.MapPost("api/users-service/refresh-tokens/login", async (
                 LoginWithRefreshTokenRequest request,
@@ -17,6 +17,8 @@ public static class LoginWithRefreshTokenEndpoint
                 TimeProvider timeProvider,
                 CancellationToken cancellationToken) =>
             {
+                var currentUtcDate = timeProvider.GetUtcNow().DateTime.ToUniversalTime();
+                
                 var validationResult = await validator.ValidateAsync(request, cancellationToken);
                 if (!validationResult.IsValid)
                     return Results.ValidationProblem(validationResult.ToDictionary());
@@ -25,7 +27,7 @@ public static class LoginWithRefreshTokenEndpoint
                     .Include(x => x.User)
                     .FirstOrDefaultAsync(x => x.Value == request.RefreshToken, cancellationToken);
 
-                if (refreshToken is null || refreshToken.ExpireAt < timeProvider.GetUtcNow().DateTime.ToUniversalTime())
+                if (refreshToken is null || refreshToken.ExpireAt < currentUtcDate)
                     return Results.BadRequest("Refresh token is invalid or expired.");
 
                 var refreshTokenValue = TokenProvider.GenerateRefreshToken();
@@ -35,9 +37,11 @@ public static class LoginWithRefreshTokenEndpoint
                 var accessTokenValue = tokenProvider.GenerateAccessToken(refreshToken.User);
                 if (string.IsNullOrEmpty(accessTokenValue))
                     return Results.BadRequest("Failed to generate access token.");
-
-                refreshToken.Update(refreshTokenValue);
-
+                
+                refreshToken.Value = refreshTokenValue;
+                refreshToken.ExpireAt = DateTime.UtcNow.AddDays(7);
+                
+                dbContext.RefreshTokens.Update(refreshToken);
                 await dbContext.SaveChangesAsync(cancellationToken);
 
                 return Results.Ok(new LoginWithRefreshTokenResponse

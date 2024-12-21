@@ -6,7 +6,7 @@ namespace Sample.Services.Users.Features.RefreshTokens.RevokeRefreshTokens;
 
 public static class RevokeRefreshTokensEndpoint
 {
-    public static IEndpointRouteBuilder MapEndpoint(this IEndpointRouteBuilder builder)
+    public static IEndpointRouteBuilder MapRevokeRefreshTokensEndpoint(this IEndpointRouteBuilder builder)
     {
         builder.MapDelete("api/users-service/refresh-tokens/{userId:guid}/revoke", async (
                 Guid userId,

@@ -8,15 +8,18 @@ namespace Sample.Services.Users.Features.Users.LoginUser;
 
 public static class LoginUserEndpoint
 {
-    public static IEndpointRouteBuilder MapEndpoint(this IEndpointRouteBuilder builder)
+    public static IEndpointRouteBuilder MapLoginUserEndpoint(this IEndpointRouteBuilder builder)
     {
         builder.MapPost("api/users-service/users/login", async (
                 LoginUserRequest request,
                 IValidator<LoginUserRequest> validator,
                 UsersServiceDbContext dbContext,
                 TokenProvider tokenProvider,
+                TimeProvider timeProvider,
                 CancellationToken cancellationToken) =>
             {
+                var currentUtcDate = timeProvider.GetUtcNow().DateTime.ToUniversalTime();
+                
                 var validationResult = await validator.ValidateAsync(request, cancellationToken);
                 if (!validationResult.IsValid)
                     return Results.ValidationProblem(validationResult.ToDictionary());
@@ -40,9 +43,13 @@ public static class LoginUserEndpoint
                 if (string.IsNullOrEmpty(refreshTokenValue))
                     return Results.BadRequest("Failed to generate refresh token.");
 
-                var refreshToken = RefreshToken.Create(
-                    user.Id,
-                    refreshTokenValue);
+                var refreshToken = new RefreshToken
+                {
+                    Id = Guid.CreateVersion7(),
+                    UserId = user.Id,
+                    Value = refreshTokenValue,
+                    ExpireAt = currentUtcDate.AddDays(7)
+                };
 
                 await dbContext.RefreshTokens.AddAsync(refreshToken, cancellationToken);
                 await dbContext.SaveChangesAsync(cancellationToken);

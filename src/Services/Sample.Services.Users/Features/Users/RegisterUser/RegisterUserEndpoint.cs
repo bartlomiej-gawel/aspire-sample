@@ -9,7 +9,7 @@ namespace Sample.Services.Users.Features.Users.RegisterUser;
 
 public static class RegisterUserEndpoint
 {
-    public static IEndpointRouteBuilder MapEndpoint(this IEndpointRouteBuilder builder)
+    public static IEndpointRouteBuilder MapRegisterUserEndpoint(this IEndpointRouteBuilder builder)
     {
         builder.MapPost("api/users-service/users/register", async (
                 RegisterUserRequest request,
@@ -17,8 +17,11 @@ public static class RegisterUserEndpoint
                 UsersServiceDbContext dbContext,
                 IPublishEndpoint publishEndpoint,
                 ActivationTokenLinkFactory activationTokenLinkFactory,
+                TimeProvider timeProvider,
                 CancellationToken cancellationToken) =>
             {
+                var currentUtcDate = timeProvider.GetUtcNow().DateTime.ToUniversalTime();
+                
                 var validationResult = await validator.ValidateAsync(request, cancellationToken);
                 if (!validationResult.IsValid)
                     return Results.ValidationProblem(validationResult.ToDictionary());
@@ -40,16 +43,30 @@ public static class RegisterUserEndpoint
                 var hashedPassword = UserPasswordHasher.Hash(request.Password);
                 if (string.IsNullOrEmpty(hashedPassword))
                     return Results.BadRequest("Provided password is invalid.");
+                
+                var user = new User
+                {
+                    Id = Guid.CreateVersion7(),
+                    OrganizationId = Guid.CreateVersion7(),
+                    OrganizationName = request.OrganizationName,
+                    Name = request.Name,
+                    Surname = request.Surname,
+                    Email = request.Email,
+                    Phone = request.Phone,
+                    Password = hashedPassword,
+                    Status = UserStatus.Inactive,
+                    CreatedAt = currentUtcDate,
+                    UpdatedAt = null
+                };
 
-                var user = User.Register(
-                    request.OrganizationName,
-                    request.Name,
-                    request.Surname,
-                    request.Email,
-                    request.Phone,
-                    hashedPassword);
-
-                var activationToken = ActivationToken.Generate(user.Id);
+                var activationToken = new ActivationToken
+                {
+                    Id = Guid.CreateVersion7(),
+                    UserId = user.Id,
+                    CreatedAt = currentUtcDate,
+                    ExpireAt = currentUtcDate.AddDays(1)
+                };
+                
                 var activationLink = activationTokenLinkFactory.CreateLink(activationToken);
                 if (string.IsNullOrEmpty(activationLink))
                     return Results.BadRequest("Failed to create activation link.");
