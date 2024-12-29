@@ -28,7 +28,7 @@ internal sealed class RegisterUserEndpoint : Endpoint<RegisterUserRequest, Error
         _activationTokenLinkFactory = activationTokenLinkFactory;
         _publishEndpoint = publishEndpoint;
     }
-    
+
     public override void Configure()
     {
         Post("api/users-service/users/register");
@@ -38,12 +38,12 @@ internal sealed class RegisterUserEndpoint : Endpoint<RegisterUserRequest, Error
     public override async Task<ErrorOr<Ok>> ExecuteAsync(RegisterUserRequest req, CancellationToken ct)
     {
         var utcDateTime = _timeProvider.GetUtcNow().UtcDateTime;
-        
+
         var existingUser = await _dbContext.Users
             .Where(x => x.OrganizationName == req.OrganizationName || x.Email == req.Email)
             .Select(x => new { x.OrganizationName, x.Email })
             .FirstOrDefaultAsync(ct);
-        
+
         if (existingUser != null)
         {
             if (existingUser.OrganizationName == req.OrganizationName)
@@ -52,7 +52,7 @@ internal sealed class RegisterUserEndpoint : Endpoint<RegisterUserRequest, Error
             if (existingUser.Email == req.Email)
                 return UserErrors.EmailAlreadyInUse;
         }
-        
+
         var hashedPasswordResult = UserPasswordHasher.Hash(req.Password);
         if (hashedPasswordResult.IsError)
             return hashedPasswordResult.Errors;
@@ -64,15 +64,15 @@ internal sealed class RegisterUserEndpoint : Endpoint<RegisterUserRequest, Error
             req.Email,
             req.Phone,
             hashedPasswordResult.Value);
-        
+
         var activationToken = ActivationToken.Create(
             user.Id,
             utcDateTime);
-        
+
         var activationTokenLinkResult = _activationTokenLinkFactory.CreateLink(activationToken);
         if (activationTokenLinkResult.IsError)
             return activationTokenLinkResult.Errors;
-        
+
         await _dbContext.Users.AddAsync(user, ct);
         await _dbContext.ActivationTokens.AddAsync(activationToken, ct);
 

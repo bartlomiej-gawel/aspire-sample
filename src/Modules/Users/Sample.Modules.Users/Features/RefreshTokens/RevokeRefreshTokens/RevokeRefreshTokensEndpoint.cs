@@ -32,18 +32,18 @@ internal sealed class RevokeRefreshTokensEndpoint : Endpoint<RevokeRefreshTokens
         var nameIdentifierFromClaims = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrEmpty(nameIdentifierFromClaims))
             return RefreshTokenErrors.UnableToGetClaimsValueFromHttpContext;
-        
+
         var isValidUserId = Guid.TryParse(nameIdentifierFromClaims, out var currentUserId);
         if (!isValidUserId)
             return RefreshTokenErrors.UnableToParseUserFromHttpContext;
 
         if (currentUserId != req.UserId)
             return RefreshTokenErrors.UnauthorizedUserToRevokeTokens;
-        
+
         await _dbContext.RefreshTokens
             .Where(x => x.UserId == req.UserId)
             .ExecuteDeleteAsync(ct);
-        
+
         return TypedResults.Ok();
     }
 }

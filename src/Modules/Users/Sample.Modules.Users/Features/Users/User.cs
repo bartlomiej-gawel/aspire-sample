@@ -64,10 +64,10 @@ internal sealed class User
     {
         if (Status == UserStatus.Active)
             return UserErrors.AlreadyActive;
-        
+
         Status = UserStatus.Active;
         UpdatedAt = DateTime.UtcNow;
-        
+
         return Result.Success;
     }
 }

@@ -53,7 +53,7 @@ internal sealed class RefreshUserAccessEndpoint : Endpoint<RefreshUserAccessRequ
         refreshToken.Update(
             refreshTokenGenerationResult.Value,
             utcDateTime);
-        
+
         await _dbContext.SaveChangesAsync(ct);
 
         var response = new RefreshUserAccessResponse

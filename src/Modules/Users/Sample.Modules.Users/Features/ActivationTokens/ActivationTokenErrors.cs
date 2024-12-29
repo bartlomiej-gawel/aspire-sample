@@ -11,7 +11,7 @@ internal static class ActivationTokenErrors
     public static readonly Error LinkGenerationFailed = Error.Conflict(
         "ActivationTokenErrors.LinkGenerationFailed",
         "Failed to generate activation link.");
-    
+
     public static readonly Error NotFound = Error.NotFound(
         "ActivationTokenErrors.NotFound",
         "Provided activation token was not found.");

@@ -35,7 +35,7 @@ internal sealed class RefreshToken
             value,
             utcDateTime);
     }
-    
+
     public void Update(
         string value,
         DateTime utcDateTime)

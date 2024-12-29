@@ -22,7 +22,7 @@ internal sealed class ActivationTokenLinkFactory
         var httpContext = _httpContextAccessor.HttpContext;
         if (httpContext is null)
             return ActivationTokenErrors.HttpContextNotAvailable;
-        
+
         var activationLink = _linkGenerator.GetUriByName(
             httpContext,
             "activate-user",

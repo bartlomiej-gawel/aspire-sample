@@ -1,6 +1,8 @@
 namespace Sample.Modules.Organizations.Features.Employees;
 
-public sealed class EmployeeStatus
+internal enum EmployeeStatus
 {
-    
+    Inactive = 1,
+    Active = 2,
+    Archived = 3
 }

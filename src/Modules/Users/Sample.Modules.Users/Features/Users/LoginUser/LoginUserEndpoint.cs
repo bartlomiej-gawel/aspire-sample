@@ -32,7 +32,7 @@ internal sealed class LoginUserEndpoint : Endpoint<LoginUserRequest, ErrorOr<Log
     public override async Task<ErrorOr<LoginUserResponse>> ExecuteAsync(LoginUserRequest req, CancellationToken ct)
     {
         var utcDateTime = _timeProvider.GetUtcNow().UtcDateTime;
-        
+
         var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Email == req.Email, ct);
         if (user is null)
             return UserErrors.NotFound;
@@ -43,29 +43,29 @@ internal sealed class LoginUserEndpoint : Endpoint<LoginUserRequest, ErrorOr<Log
         var isPasswordVerifiedResult = UserPasswordHasher.Verify(req.Password, user.Password);
         if (isPasswordVerifiedResult.IsError)
             return isPasswordVerifiedResult.Errors;
-        
+
         var accessTokenGenerationResult = _jwtProvider.GenerateAccessToken(user);
         if (accessTokenGenerationResult.IsError)
             return accessTokenGenerationResult.Errors;
-        
+
         var refreshTokenGenerationResult = _jwtProvider.GenerateRefreshToken();
         if (refreshTokenGenerationResult.IsError)
             return refreshTokenGenerationResult.Errors;
-        
+
         var refreshToken = RefreshToken.Create(
             user.Id,
             refreshTokenGenerationResult.Value,
             utcDateTime);
-        
+
         await _dbContext.RefreshTokens.AddAsync(refreshToken, ct);
         await _dbContext.SaveChangesAsync(ct);
-        
+
         var response = new LoginUserResponse
         {
             AccessToken = accessTokenGenerationResult.Value,
             RefreshToken = refreshTokenGenerationResult.Value
         };
-        
+
         return response;
     }
 }

@@ -1,6 +1,8 @@
 namespace Sample.Modules.Organizations.Features.Locations;
 
-public sealed class LocationAddress
+internal sealed record LocationAddress
 {
-    
+    public string Street { get; private set; } = null!;
+    public string City { get; private set; } = null!;
+    public string PostalCode { get; private set; } = null!;
 }

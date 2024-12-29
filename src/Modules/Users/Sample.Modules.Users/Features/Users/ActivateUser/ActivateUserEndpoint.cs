@@ -35,7 +35,7 @@ internal sealed class ActivateUserEndpoint : Endpoint<ActivateUserRequest, Error
     public override async Task<ErrorOr<Ok>> ExecuteAsync(ActivateUserRequest req, CancellationToken ct)
     {
         var utcDateTime = _timeProvider.GetUtcNow().UtcDateTime;
-        
+
         var userActivationToken = await _dbContext.ActivationTokens
             .Include(x => x.User)
             .FirstOrDefaultAsync(x => x.Id == req.ActivationToken, ct);
@@ -45,20 +45,20 @@ internal sealed class ActivateUserEndpoint : Endpoint<ActivateUserRequest, Error
 
         if (userActivationToken.ExpireAt < utcDateTime)
             return ActivationTokenErrors.AlreadyExpired;
-        
+
         var userActivationResult = userActivationToken.User.Activate();
         if (userActivationResult.IsError)
             return userActivationResult.Errors;
-        
+
         _dbContext.ActivationTokens.Remove(userActivationToken);
-        
+
         await _publishEndpoint.Publish(new UserRegistrationConfirmed(
                 userActivationToken.User.Id,
                 userActivationToken.User.OrganizationId),
             ct);
 
         await _dbContext.SaveChangesAsync(ct);
-        
+
         return TypedResults.Ok();
     }
 }
