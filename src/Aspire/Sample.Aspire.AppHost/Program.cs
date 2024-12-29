@@ -9,18 +9,31 @@ var postgres = builder.AddPostgres("sample-postgres", postgresUsername, postgres
     .WithLifetime(ContainerLifetime.Persistent)
     .WithPgAdmin();
 
-var rabbitmqUsername = builder.AddParameter("rabbitmq-username", true);
-var rabbitmqPassword = builder.AddParameter("rabbitmq-password", true);
-var rabbitmq = builder.AddRabbitMQ("sample-rabbitmq", rabbitmqUsername, rabbitmqPassword)
-    .WithLifetime(ContainerLifetime.Persistent)
-    .WithManagementPlugin();
+// var attendanceDb = postgres.AddDatabase("sample-attendance-db");
+// var eventsDb = postgres.AddDatabase("sample-events-db");
+// var ticketingDb = postgres.AddDatabase("sample-ticketing-db");
+// var usersDb = postgres.AddDatabase("sample-users-db");
+//
+// builder.AddProject<Sample_Bootstrapper>("sample-bootstrapper")
+//     .WaitFor(attendanceDb)
+//     .WaitFor(eventsDb)
+//     .WaitFor(ticketingDb)
+//     .WaitFor(usersDb);
 
-var notificationsServiceDb = postgres.AddDatabase("sample-notifications-service-db");
-var notificationsService = builder.AddProject<Sample_Services_Notifications>("sample-notifications-service")
-    .WaitFor(notificationsServiceDb)
-    .WaitFor(rabbitmq)
-    .WithReference(notificationsServiceDb)
-    .WithEnvironment("Rabbit__Host", rabbitmq.Resource.ConnectionStringExpression);
+
+
+// var rabbitmqUsername = builder.AddParameter("rabbitmq-username", true);
+// var rabbitmqPassword = builder.AddParameter("rabbitmq-password", true);
+// var rabbitmq = builder.AddRabbitMQ("sample-rabbitmq", rabbitmqUsername, rabbitmqPassword)
+//     .WithLifetime(ContainerLifetime.Persistent)
+//     .WithManagementPlugin();
+
+// var notificationsServiceDb = postgres.AddDatabase("sample-notifications-service-db");
+// var notificationsService = builder.AddProject<Sample_Services_Notifications>("sample-notifications-service")
+//     .WaitFor(notificationsServiceDb)
+//     .WaitFor(rabbitmq)
+//     .WithReference(notificationsServiceDb)
+//     .WithEnvironment("Rabbit__Host", rabbitmq.Resource.ConnectionStringExpression);
 
 // var organizationsServiceDb = postgres.AddDatabase("sample-organizations-service-db");
 // var organizationsService = builder.AddProject<Sample_Services_Organizations>("sample-organizations-service")
@@ -29,12 +42,12 @@ var notificationsService = builder.AddProject<Sample_Services_Notifications>("sa
 //     .WithReference(organizationsServiceDb)
 //     .WithEnvironment("Rabbit__Host", rabbitmq.Resource.ConnectionStringExpression);
 
-var usersServiceDb = postgres.AddDatabase("sample-users-service-db");
-var usersService = builder.AddProject<Sample_Services_Users>("sample-users-service")
-    .WaitFor(usersServiceDb)
-    .WaitFor(rabbitmq)
-    .WithReference(usersServiceDb)
-    .WithEnvironment("Rabbit__Host", rabbitmq.Resource.ConnectionStringExpression);
+// var usersServiceDb = postgres.AddDatabase("sample-users-service-db");
+// var usersService = builder.AddProject<Sample_Services_Users>("sample-users-service")
+//     .WaitFor(usersServiceDb)
+//     .WaitFor(rabbitmq)
+//     .WithReference(usersServiceDb)
+//     .WithEnvironment("Rabbit__Host", rabbitmq.Resource.ConnectionStringExpression);
 
 // builder.AddProject<Sample_Gateway_Yarp>("sample-yarp-gateway")
 //     .WaitFor(notificationsService)

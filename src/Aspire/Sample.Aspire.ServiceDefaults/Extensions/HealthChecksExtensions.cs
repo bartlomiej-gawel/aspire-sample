@@ -10,8 +10,7 @@ public static class HealthChecksExtensions
 {
     public static IHostApplicationBuilder AddHealthChecksConfiguration(this IHostApplicationBuilder builder)
     {
-        builder.Services
-            .AddHealthChecks()
+        builder.Services.AddHealthChecks()
             .AddCheck("self", () => HealthCheckResult.Healthy(), ["live"]);
 
         return builder;

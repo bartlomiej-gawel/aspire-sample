@@ -8,7 +8,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\Aspire\Sample.Aspire.ServiceDefaults\Sample.Aspire.ServiceDefaults.csproj"/>
         <ProjectReference Include="..\..\Shared\Sample.Shared.Messages\Sample.Shared.Messages.csproj"/>
     </ItemGroup>
 

@@ -1,0 +1,10 @@
+{
+  "Users": {
+    "JwtSettings": {
+      "SecretKey": "secret-key",
+      "Issuer": "sample-aspire",
+      "Audience": "account",
+      "ExpirationInMinutes": 10
+    }
+  }
+}
