@@ -1,6 +1,5 @@
 using ErrorOr;
 using FastEndpoints;
-using MassTransit;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
@@ -14,16 +13,13 @@ internal sealed class ActivateUserEndpoint : Endpoint<ActivateUserRequest, Error
 {
     private readonly UsersModuleDbContext _dbContext;
     private readonly TimeProvider _timeProvider;
-    private readonly IPublishEndpoint _publishEndpoint;
 
     public ActivateUserEndpoint(
         UsersModuleDbContext dbContext,
-        TimeProvider timeProvider,
-        IPublishEndpoint publishEndpoint)
+        TimeProvider timeProvider)
     {
         _dbContext = dbContext;
         _timeProvider = timeProvider;
-        _publishEndpoint = publishEndpoint;
     }
 
     public override void Configure()
@@ -52,11 +48,11 @@ internal sealed class ActivateUserEndpoint : Endpoint<ActivateUserRequest, Error
 
         _dbContext.ActivationTokens.Remove(userActivationToken);
 
-        await _publishEndpoint.Publish(new UserRegistrationConfirmed(
+        await new UserRegistrationConfirmed(
                 userActivationToken.User.Id,
-                userActivationToken.User.OrganizationId),
-            ct);
-
+                userActivationToken.User.OrganizationId)
+            .PublishAsync(Mode.WaitForNone, cancellation: ct);
+        
         await _dbContext.SaveChangesAsync(ct);
 
         return TypedResults.Ok();

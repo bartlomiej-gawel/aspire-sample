@@ -1,3 +1,5 @@
+using FastEndpoints;
+
 namespace Sample.Shared.Messages.Modules.Users;
 
 public sealed record UserRegistered(
@@ -8,4 +10,4 @@ public sealed record UserRegistered(
     string UserPhone,
     Guid OrganizationId,
     string OrganizationName,
-    string ActivationLink);
+    string ActivationLink) : IEvent;

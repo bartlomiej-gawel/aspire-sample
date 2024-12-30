@@ -1,6 +1,5 @@
 using ErrorOr;
 using FastEndpoints;
-using MassTransit;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
@@ -15,18 +14,15 @@ internal sealed class RegisterUserEndpoint : Endpoint<RegisterUserRequest, Error
     private readonly UsersModuleDbContext _dbContext;
     private readonly TimeProvider _timeProvider;
     private readonly ActivationTokenLinkFactory _activationTokenLinkFactory;
-    private readonly IPublishEndpoint _publishEndpoint;
 
     public RegisterUserEndpoint(
         UsersModuleDbContext dbContext,
         TimeProvider timeProvider,
-        ActivationTokenLinkFactory activationTokenLinkFactory,
-        IPublishEndpoint publishEndpoint)
+        ActivationTokenLinkFactory activationTokenLinkFactory)
     {
         _dbContext = dbContext;
         _timeProvider = timeProvider;
         _activationTokenLinkFactory = activationTokenLinkFactory;
-        _publishEndpoint = publishEndpoint;
     }
 
     public override void Configure()
@@ -76,7 +72,7 @@ internal sealed class RegisterUserEndpoint : Endpoint<RegisterUserRequest, Error
         await _dbContext.Users.AddAsync(user, ct);
         await _dbContext.ActivationTokens.AddAsync(activationToken, ct);
 
-        await _publishEndpoint.Publish(new UserRegistered(
+        await new UserRegistered(
                 user.Id,
                 user.Name,
                 user.Surname,
@@ -84,8 +80,8 @@ internal sealed class RegisterUserEndpoint : Endpoint<RegisterUserRequest, Error
                 user.Phone,
                 user.OrganizationId,
                 user.OrganizationName,
-                activationTokenLinkResult.Value),
-            ct);
+                activationTokenLinkResult.Value)
+            .PublishAsync(Mode.WaitForNone, cancellation: ct);
 
         await _dbContext.SaveChangesAsync(ct);
 
