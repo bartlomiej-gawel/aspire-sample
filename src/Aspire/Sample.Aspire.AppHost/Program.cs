@@ -1,5 +1,3 @@
-using Projects;
-
 var builder = DistributedApplication.CreateBuilder(args);
 
 // var postgresUsername = builder.AddParameter("postgres-username", true);

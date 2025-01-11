@@ -16,31 +16,26 @@ internal sealed class RefreshToken
 
     private RefreshToken(
         Guid userId,
-        string value,
-        DateTime utcDateTime)
+        string value)
     {
         Id = Guid.CreateVersion7();
         UserId = userId;
         Value = value;
-        ExpireAt = utcDateTime.AddDays(7);
+        ExpireAt = DateTime.UtcNow.AddDays(7);
     }
 
     public static RefreshToken Create(
         Guid userId,
-        string value,
-        DateTime utcDateTime)
+        string value)
     {
         return new RefreshToken(
             userId,
-            value,
-            utcDateTime);
+            value);
     }
 
-    public void Update(
-        string value,
-        DateTime utcDateTime)
+    public void Update(string value)
     {
         Value = value;
-        ExpireAt = utcDateTime.AddDays(7);
+        ExpireAt = DateTime.UtcNow.AddDays(7);
     }
 }

@@ -1,9 +1,8 @@
-using FastEndpoints;
 using FluentValidation;
 
 namespace Sample.Modules.Users.Features.RefreshTokens.RefreshUserAccess;
 
-internal sealed class RefreshUserAccessRequestValidator : Validator<RefreshUserAccessRequest>
+internal sealed class RefreshUserAccessRequestValidator : AbstractValidator<RefreshUserAccessRequest>
 {
     public RefreshUserAccessRequestValidator()
     {

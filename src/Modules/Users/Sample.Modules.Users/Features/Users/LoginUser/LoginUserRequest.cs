@@ -1,7 +1,8 @@
+using ErrorOr;
+using MediatR;
+
 namespace Sample.Modules.Users.Features.Users.LoginUser;
 
-internal sealed class LoginUserRequest
-{
-    public required string Email { get; init; }
-    public required string Password { get; init; }
-}
+internal sealed record LoginUserRequest(
+    string Email,
+    string Password) : IRequest<ErrorOr<LoginUserResponse>>;

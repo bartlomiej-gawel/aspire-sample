@@ -1,9 +1,8 @@
-using FastEndpoints;
 using FluentValidation;
 
 namespace Sample.Modules.Users.Features.Users.LoginUser;
 
-internal sealed class LoginUserRequestValidator : Validator<LoginUserRequest>
+internal sealed class LoginUserRequestValidator : AbstractValidator<LoginUserRequest>
 {
     public LoginUserRequestValidator()
     {

@@ -1,8 +1,8 @@
-using FastEndpoints;
+using MediatR;
 
-namespace Sample.Shared.Messages.Modules.Users;
+namespace Sample.Shared.Contracts.Users;
 
-public sealed record UserRegistered(
+public sealed record UserRegisteredNotification(
     Guid UserId,
     string UserName,
     string UserSurname,
@@ -10,4 +10,4 @@ public sealed record UserRegistered(
     string UserPhone,
     Guid OrganizationId,
     string OrganizationName,
-    string ActivationLink) : IEvent;
+    string ActivationLink) : INotification;

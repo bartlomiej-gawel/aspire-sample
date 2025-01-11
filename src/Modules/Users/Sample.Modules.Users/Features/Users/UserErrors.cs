@@ -4,6 +4,14 @@ namespace Sample.Modules.Users.Features.Users;
 
 internal static class UserErrors
 {
+    public static readonly Error EmailAlreadyExists = Error.Conflict(
+        "UserErrors.EmailAlreadyExists",
+        "Email already exists.");
+
+    public static readonly Error OrganizationNameAlreadyExists = Error.Conflict(
+        "UserErrors.OrganizationNameAlreadyExists",
+        "Organization name already exists.");
+
     public static readonly Error NotFound = Error.NotFound(
         "UserErrors.NotFound",
         "User with provided id was not found.");
@@ -16,14 +24,10 @@ internal static class UserErrors
         "UserErrors.AlreadyActive",
         "User is already active.");
 
-    public static readonly Error OrganizationNameAlreadyExists = Error.Conflict(
-        "UserErrors.OrganizationNameAlreadyExists",
-        "Organization name already exists.");
-
-    public static readonly Error EmailAlreadyInUse = Error.Conflict(
-        "UserErrors.EmailAlreadyInUse",
-        "Email already in use.");
-
+    public static readonly Error InvalidPassword = Error.Conflict(
+        "UserErrors.InvalidPassword",
+        "Invalid password.");
+    
     public static readonly Error InvalidPasswordToHash = Error.Conflict(
         "UserErrors.PasswordHashingError",
         "Invalid password to hash.");

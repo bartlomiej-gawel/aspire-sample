@@ -6,7 +6,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace Sample.Aspire.ServiceDefaults.Extensions;
 
-public static class HealthChecksExtensions
+internal static class HealthChecksExtensions
 {
     public static IHostApplicationBuilder AddHealthChecksConfiguration(this IHostApplicationBuilder builder)
     {

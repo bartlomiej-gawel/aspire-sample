@@ -1,9 +1,8 @@
-using FastEndpoints;
 using FluentValidation;
 
 namespace Sample.Modules.Users.Features.Users.RegisterUser;
 
-internal sealed class RegisterUserRequestValidator : Validator<RegisterUserRequest>
+internal sealed class RegisterUserRequestValidator : AbstractValidator<RegisterUserRequest>
 {
     public RegisterUserRequestValidator()
     {

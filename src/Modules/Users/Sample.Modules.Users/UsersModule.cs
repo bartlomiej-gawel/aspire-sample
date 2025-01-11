@@ -9,6 +9,8 @@ namespace Sample.Modules.Users;
 
 public sealed class UsersModule : IModule
 {
+    public string ModuleName => "Users";
+
     public void RegisterModule(IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<JwtProvider>();

@@ -8,7 +8,7 @@ using OpenTelemetry.Trace;
 
 namespace Sample.Aspire.ServiceDefaults.Extensions;
 
-public static class OpenTelemetryExtensions
+internal static class OpenTelemetryExtensions
 {
     public static IHostApplicationBuilder AddOpenTelemetryConfiguration(this IHostApplicationBuilder builder)
     {

@@ -1,9 +1,8 @@
-using FastEndpoints;
 using FluentValidation;
 
 namespace Sample.Modules.Users.Features.Users.ActivateUser;
 
-internal sealed class ActivateUserRequestValidator : Validator<ActivateUserRequest>
+internal sealed class ActivateUserRequestValidator : AbstractValidator<ActivateUserRequest>
 {
     public ActivateUserRequestValidator()
     {

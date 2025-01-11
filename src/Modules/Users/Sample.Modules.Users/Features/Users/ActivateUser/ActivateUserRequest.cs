@@ -1,6 +1,6 @@
+using ErrorOr;
+using MediatR;
+
 namespace Sample.Modules.Users.Features.Users.ActivateUser;
 
-internal sealed class ActivateUserRequest
-{
-    public required Guid ActivationToken { get; init; }
-}
+internal sealed record ActivateUserRequest(Guid ActivationToken) : IRequest<ErrorOr<Success>>;

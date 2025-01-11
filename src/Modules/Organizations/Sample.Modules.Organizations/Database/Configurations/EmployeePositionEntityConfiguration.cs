@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Sample.Modules.Organizations.Features.EmployeePositions;
-using Sample.Modules.Organizations.Features.Employees;
 
 namespace Sample.Modules.Organizations.Database.Configurations;
 

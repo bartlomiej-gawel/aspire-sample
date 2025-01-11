@@ -1,12 +1,13 @@
+using ErrorOr;
+using MediatR;
+
 namespace Sample.Modules.Users.Features.Users.RegisterUser;
 
-internal sealed class RegisterUserRequest
-{
-    public required string Name { get; init; }
-    public required string Surname { get; init; }
-    public required string OrganizationName { get; init; }
-    public required string Email { get; init; }
-    public required string Phone { get; init; }
-    public required string Password { get; init; }
-    public required string RepeatPassword { get; init; }
-}
+internal sealed record RegisterUserRequest(
+    string Name,
+    string Surname,
+    string OrganizationName,
+    string Email,
+    string Phone,
+    string Password,
+    string RepeatPassword) : IRequest<ErrorOr<Success>>;

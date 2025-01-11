@@ -14,22 +14,16 @@ internal sealed class ActivationToken
     {
     }
 
-    private ActivationToken(
-        Guid userId,
-        DateTime utcDateTime)
+    private ActivationToken(Guid userId)
     {
         Id = Guid.CreateVersion7();
         UserId = userId;
-        CreatedAt = utcDateTime;
-        ExpireAt = utcDateTime.AddDays(1);
+        CreatedAt = DateTime.UtcNow;
+        ExpireAt = DateTime.UtcNow.AddDays(1);
     }
 
-    public static ActivationToken Create(
-        Guid userId,
-        DateTime utcDateTime)
+    public static ActivationToken CreateToken(Guid userId)
     {
-        return new ActivationToken(
-            userId,
-            utcDateTime);
+        return new ActivationToken(userId);
     }
 }

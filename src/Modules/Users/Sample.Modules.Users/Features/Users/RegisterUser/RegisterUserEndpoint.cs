@@ -1,90 +1,42 @@
-using ErrorOr;
-using FastEndpoints;
+using MediatR;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.EntityFrameworkCore;
-using Sample.Modules.Users.Database;
-using Sample.Modules.Users.Features.ActivationTokens;
-using Sample.Shared.Messages.Modules.Users;
+using Microsoft.AspNetCore.Routing;
+using Sample.Shared.Infrastructure.Endpoints;
 
 namespace Sample.Modules.Users.Features.Users.RegisterUser;
 
-internal sealed class RegisterUserEndpoint : Endpoint<RegisterUserRequest, ErrorOr<Ok>>
+internal sealed class RegisterUserEndpoint : IEndpoint
 {
-    private readonly UsersModuleDbContext _dbContext;
-    private readonly TimeProvider _timeProvider;
-    private readonly ActivationTokenLinkFactory _activationTokenLinkFactory;
-
-    public RegisterUserEndpoint(
-        UsersModuleDbContext dbContext,
-        TimeProvider timeProvider,
-        ActivationTokenLinkFactory activationTokenLinkFactory)
+    public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        _dbContext = dbContext;
-        _timeProvider = timeProvider;
-        _activationTokenLinkFactory = activationTokenLinkFactory;
+        app.MapPost("api/users-module/users/register", async (
+                Request request,
+                ISender sender) =>
+            {
+                var result = await sender.Send(new RegisterUserRequest(
+                    request.Name,
+                    request.Surname,
+                    request.OrganizationName,
+                    request.Email,
+                    request.Phone,
+                    request.Password,
+                    request.RepeatPassword
+                ));
+
+                return result.Match(
+                    _ => Results.Ok(),
+                    errors => errors.ToProblemResult());
+            })
+            .WithName("register-user");
     }
 
-    public override void Configure()
-    {
-        Post("api/users-service/users/register");
-        AllowAnonymous();
-    }
-
-    public override async Task<ErrorOr<Ok>> ExecuteAsync(RegisterUserRequest req, CancellationToken ct)
-    {
-        var utcDateTime = _timeProvider.GetUtcNow().UtcDateTime;
-
-        var existingUser = await _dbContext.Users
-            .Where(x => x.OrganizationName == req.OrganizationName || x.Email == req.Email)
-            .Select(x => new { x.OrganizationName, x.Email })
-            .FirstOrDefaultAsync(ct);
-
-        if (existingUser != null)
-        {
-            if (existingUser.OrganizationName == req.OrganizationName)
-                return UserErrors.OrganizationNameAlreadyExists;
-
-            if (existingUser.Email == req.Email)
-                return UserErrors.EmailAlreadyInUse;
-        }
-
-        var hashedPasswordResult = UserPasswordHasher.Hash(req.Password);
-        if (hashedPasswordResult.IsError)
-            return hashedPasswordResult.Errors;
-
-        var user = Users.User.RegisterOrganizationAdmin(
-            req.OrganizationName,
-            req.Name,
-            req.Surname,
-            req.Email,
-            req.Phone,
-            hashedPasswordResult.Value);
-
-        var activationToken = ActivationToken.Create(
-            user.Id,
-            utcDateTime);
-
-        var activationTokenLinkResult = _activationTokenLinkFactory.CreateLink(activationToken);
-        if (activationTokenLinkResult.IsError)
-            return activationTokenLinkResult.Errors;
-
-        await _dbContext.Users.AddAsync(user, ct);
-        await _dbContext.ActivationTokens.AddAsync(activationToken, ct);
-
-        await new UserRegistered(
-                user.Id,
-                user.Name,
-                user.Surname,
-                user.Email,
-                user.Phone,
-                user.OrganizationId,
-                user.OrganizationName,
-                activationTokenLinkResult.Value)
-            .PublishAsync(Mode.WaitForNone, cancellation: ct);
-
-        await _dbContext.SaveChangesAsync(ct);
-
-        return TypedResults.Ok();
-    }
+    private sealed record Request(
+        string Name,
+        string Surname,
+        string OrganizationName,
+        string Email,
+        string Phone,
+        string Password,
+        string RepeatPassword);
 }
