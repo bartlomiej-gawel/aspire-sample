@@ -1,7 +1,7 @@
 namespace Sample.Bootstrapper.Extensions;
 
-internal static class DatabaseExtensions
-{
+// internal static class DatabaseExtensions
+// {
     // public static async Task RunDatabaseMigrationsAsync<TDbContext>(this WebApplication app) 
     //     where TDbContext : DbContext
     // {
@@ -14,4 +14,4 @@ internal static class DatabaseExtensions
     //         await dbContext.Database.MigrateAsync();
     //     });
     // }
-}
+// }

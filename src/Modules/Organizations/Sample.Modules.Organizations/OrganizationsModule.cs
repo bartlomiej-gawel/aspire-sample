@@ -7,6 +7,8 @@ namespace Sample.Modules.Organizations;
 
 public sealed class OrganizationsModule : IModule
 {
+    public string ModuleName => "Organizations";
+
     public void RegisterModule(IServiceCollection services, IConfiguration configuration)
     {
     }

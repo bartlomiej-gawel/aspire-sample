@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Sample.Shared.Infrastructure.Exceptions;
 
 namespace Sample.Shared.Infrastructure.Mediator.Behaviors;
 
@@ -24,8 +25,8 @@ public sealed class ExceptionBehavior<TRequest, TResponse> : IPipelineBehavior<T
         }
         catch (Exception exception)
         {
-            _logger.LogError(exception, "Error occured: {Message}", exception.Message);
-            throw;
+            _logger.LogError(exception, "Unhandled exception for {RequestName}", typeof(TRequest).Name);
+            throw new CustomException(typeof(TRequest).Name, innerException: exception);
         }
     }
 }

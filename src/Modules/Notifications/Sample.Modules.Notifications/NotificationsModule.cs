@@ -7,6 +7,8 @@ namespace Sample.Modules.Notifications;
 
 public sealed class NotificationsModule : IModule
 {
+    public string ModuleName => "Notifications";
+
     public void RegisterModule(IServiceCollection services, IConfiguration configuration)
     {
     }

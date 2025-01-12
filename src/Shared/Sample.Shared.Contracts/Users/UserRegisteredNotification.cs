@@ -4,10 +4,10 @@ namespace Sample.Shared.Contracts.Users;
 
 public sealed record UserRegisteredNotification(
     Guid UserId,
-    string UserName,
-    string UserSurname,
-    string UserEmail,
-    string UserPhone,
+    string Name,
+    string Surname,
+    string Email,
+    string Phone,
     Guid OrganizationId,
     string OrganizationName,
     string ActivationLink) : INotification;
