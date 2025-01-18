@@ -17,19 +17,19 @@ internal sealed class EmployeeEntityConfiguration : IEntityTypeConfiguration<Emp
         builder.Property(x => x.LocationId)
             .ValueGeneratedNever()
             .IsRequired();
-        
+
         builder.Property(x => x.Name)
             .HasMaxLength(255)
             .IsRequired();
-        
+
         builder.Property(x => x.Surname)
             .HasMaxLength(255)
             .IsRequired();
-        
+
         builder.Property(x => x.Email)
             .HasMaxLength(255)
             .IsRequired();
-        
+
         builder.Property(x => x.Phone)
             .HasMaxLength(15)
             .IsRequired();
@@ -39,7 +39,7 @@ internal sealed class EmployeeEntityConfiguration : IEntityTypeConfiguration<Emp
 
         builder.Property(x => x.CreatedAt)
             .IsRequired();
-        
+
         builder.Property(x => x.UpdatedAt)
             .IsRequired(false);
     }

@@ -8,22 +8,22 @@ internal sealed class OrganizationEntityConfiguration : IEntityTypeConfiguration
 {
     public void Configure(EntityTypeBuilder<Organization> builder)
     {
-        builder.HasKey(x => x.Id);
+        builder.HasKey(x => x.OrganizationId);
 
-        builder.Property(x => x.Id)
+        builder.Property(x => x.OrganizationId)
             .ValueGeneratedNever()
             .IsRequired();
 
-        builder.Property(x => x.Name)
+        builder.Property(x => x.OrganizationName)
             .HasMaxLength(255)
             .IsRequired();
 
         builder.Property(x => x.Status)
             .IsRequired();
-        
+
         builder.Property(x => x.CreatedAt)
             .IsRequired();
-        
+
         builder.Property(x => x.UpdatedAt)
             .IsRequired(false);
 

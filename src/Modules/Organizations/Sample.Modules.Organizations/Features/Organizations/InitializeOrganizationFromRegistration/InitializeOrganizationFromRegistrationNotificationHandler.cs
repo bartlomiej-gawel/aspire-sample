@@ -2,31 +2,30 @@ using MediatR;
 using Sample.Shared.Contracts.Users;
 using Sample.Shared.Infrastructure.Exceptions;
 
-namespace Sample.Modules.Notifications.Features.Recipients.CreateRecipientFromRegistration;
+namespace Sample.Modules.Organizations.Features.Organizations.InitializeOrganizationFromRegistration;
 
-internal sealed class CreateRecipientFromRegistrationNotificationHandler : INotificationHandler<UserRegisteredNotification>
+internal sealed class InitializeOrganizationFromRegistrationNotificationHandler : INotificationHandler<UserRegisteredNotification>
 {
     private readonly ISender _sender;
 
-    public CreateRecipientFromRegistrationNotificationHandler(ISender sender)
+    public InitializeOrganizationFromRegistrationNotificationHandler(ISender sender)
     {
         _sender = sender;
     }
 
     public async Task Handle(UserRegisteredNotification notification, CancellationToken cancellationToken)
     {
-        var result = await _sender.Send(new CreateRecipientFromRegistrationRequest(
+        var result = await _sender.Send(new InitializeOrganizationFromRegistrationRequest(
                 notification.UserId,
                 notification.Name,
                 notification.Surname,
                 notification.Email,
                 notification.Phone,
                 notification.OrganizationId,
-                notification.OrganizationName,
-                notification.ActivationLink),
+                notification.OrganizationName),
             cancellationToken);
 
         if (result.IsError)
-            throw new CustomException(nameof(CreateRecipientFromRegistrationRequest), result.Errors);
+            throw new CustomException(nameof(InitializeOrganizationFromRegistrationRequest), result.Errors);
     }
 }

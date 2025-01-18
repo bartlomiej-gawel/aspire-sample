@@ -36,13 +36,13 @@ internal sealed class LocationEntityConfiguration : IEntityTypeConfiguration<Loc
                 .HasMaxLength(10)
                 .IsRequired();
         });
-        
+
         builder.Property(x => x.CreatedAt)
             .IsRequired();
-        
+
         builder.Property(x => x.UpdatedAt)
             .IsRequired(false);
-        
+
         builder.HasMany(x => x.Employees)
             .WithOne(x => x.Location)
             .HasForeignKey(x => x.LocationId);

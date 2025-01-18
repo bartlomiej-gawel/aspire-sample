@@ -19,10 +19,10 @@ internal sealed class Recipient
     private Recipient(
         Guid id,
         Guid organizationId,
-        string organizationName, 
-        string name, 
-        string surname, 
-        string email, 
+        string organizationName,
+        string name,
+        string surname,
+        string email,
         string phone)
     {
         Id = id;
@@ -39,19 +39,19 @@ internal sealed class Recipient
     public static Recipient Create(
         Guid id,
         Guid organizationId,
-        string organizationName, 
-        string name, 
-        string surname, 
-        string email, 
+        string organizationName,
+        string name,
+        string surname,
+        string email,
         string phone)
     {
         return new Recipient(
             id,
             organizationId,
-            organizationName, 
-            name, 
-            surname, 
-            email, 
+            organizationName,
+            name,
+            surname,
+            email,
             phone);
     }
 }

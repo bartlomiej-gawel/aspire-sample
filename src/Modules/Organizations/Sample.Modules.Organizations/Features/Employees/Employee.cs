@@ -16,7 +16,7 @@ internal sealed class Employee
     public EmployeeRole Role { get; private set; }
     public DateTime CreatedAt { get; }
     public DateTime? UpdatedAt { get; private set; }
-    
+
     private Employee()
     {
     }
@@ -62,10 +62,10 @@ internal sealed class Employee
     {
         if (Status == EmployeeStatus.Active)
             return EmployeeErrors.AlreadyActivated;
-        
+
         Status = EmployeeStatus.Active;
         UpdatedAt = DateTime.UtcNow;
-        
+
         return Result.Success;
     }
 }

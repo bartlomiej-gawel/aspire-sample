@@ -24,10 +24,10 @@ internal sealed class LoggingBehavior<TRequest, TResponse> : IPipelineBehavior<T
     {
         var moduleName = GetModuleName(typeof(TRequest).FullName!);
         var requestName = typeof(TRequest).Name;
-        
+
         Activity.Current?.SetTag("Request.Module", moduleName);
         Activity.Current?.SetTag("Request.Name", requestName);
-        
+
         using (LogContext.PushProperty("Module", moduleName))
         {
             _logger.LogInformation("Processing request {RequestName}", requestName);
@@ -48,6 +48,6 @@ internal sealed class LoggingBehavior<TRequest, TResponse> : IPipelineBehavior<T
             return result;
         }
     }
-    
+
     private static string GetModuleName(string requestName) => requestName.Split('.')[2];
 }

@@ -13,7 +13,7 @@ internal sealed class Position
     private Position()
     {
     }
-    
+
     private Position(
         Guid positionId,
         Guid organizationId)
@@ -23,7 +23,7 @@ internal sealed class Position
         CreatedAt = DateTime.UtcNow;
         UpdatedAt = null;
     }
-    
+
     public static Position Initialize(
         Guid positionId,
         Guid organizationId)

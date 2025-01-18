@@ -11,8 +11,4 @@
         <ProjectReference Include="..\..\..\Shared\Sample.Shared.Infrastructure\Sample.Shared.Infrastructure.csproj"/>
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Features\Organizations\CreateOrganizationFromRegistration\" />
-    </ItemGroup>
-
 </Project>

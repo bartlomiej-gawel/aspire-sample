@@ -31,13 +31,13 @@ internal sealed class GlobalExceptionHandler : IExceptionHandler
 
         return true;
     }
-    
+
     private async Task HandleCustomExceptionAsync(
         HttpContext context,
         CustomException exception)
     {
         _logger.LogWarning(exception, "Unhandled exception occurred: {RequestName}", exception.RequestName);
-        
+
         var problemDetails = new ProblemDetails
         {
             Title = "Error occurred",
@@ -59,13 +59,13 @@ internal sealed class GlobalExceptionHandler : IExceptionHandler
 
         await WriteProblemDetailsAsync(context, problemDetails);
     }
-    
+
     private async Task HandleGenericExceptionAsync(
         HttpContext context,
         Exception exception)
     {
         _logger.LogError(exception, "Unhandled generic exception occurred.");
-        
+
         var problemDetails = new ProblemDetails
         {
             Title = "Internal server error",
@@ -76,7 +76,7 @@ internal sealed class GlobalExceptionHandler : IExceptionHandler
 
         await WriteProblemDetailsAsync(context, problemDetails);
     }
-    
+
     private static async Task WriteProblemDetailsAsync(
         HttpContext context,
         ProblemDetails problemDetails)

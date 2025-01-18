@@ -13,11 +13,11 @@ internal sealed class Location
     public DateTime CreatedAt { get; init; }
     public DateTime? UpdatedAt { get; set; }
     public ICollection<Employee> Employees { get; init; } = [];
-    
+
     private Location()
     {
     }
-    
+
     private Location(
         Guid locationId,
         Guid organizationId)
@@ -29,7 +29,7 @@ internal sealed class Location
         CreatedAt = DateTime.UtcNow;
         UpdatedAt = null;
     }
-    
+
     public static Location Initialize(
         Guid locationId,
         Guid organizationId)
@@ -38,7 +38,7 @@ internal sealed class Location
             locationId,
             organizationId);
     }
-    
+
     public void Update(
         string name,
         string street,

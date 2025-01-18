@@ -27,7 +27,7 @@ internal static class UserErrors
     public static readonly Error InvalidPassword = Error.Conflict(
         "UserErrors.InvalidPassword",
         "Invalid password.");
-    
+
     public static readonly Error InvalidPasswordToHash = Error.Conflict(
         "UserErrors.PasswordHashingError",
         "Invalid password to hash.");
