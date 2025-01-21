@@ -14,8 +14,7 @@ internal static class SerilogExtensions
             .WriteTo.Console();
 
         var openTelemetryExporter = builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"];
-
-        if (!string.IsNullOrEmpty(openTelemetryExporter))
+        if (openTelemetryExporter is not null)
         {
             loggerConfiguration.WriteTo.OpenTelemetry(options =>
             {

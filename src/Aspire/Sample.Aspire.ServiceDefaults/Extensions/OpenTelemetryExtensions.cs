@@ -36,8 +36,8 @@ internal static class OpenTelemetryExtensions
                     .AddNpgsql();
             });
 
-        var useOpenTelemetryExporter = !string.IsNullOrWhiteSpace(builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"]);
-        if (useOpenTelemetryExporter)
+        var openTelemetryExporter = builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"];
+        if (openTelemetryExporter is not null)
         {
             builder.Services.AddOpenTelemetry()
                 .UseOtlpExporter();

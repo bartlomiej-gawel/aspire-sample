@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\Aspire\Sample.Aspire.ServiceDefaults\Sample.Aspire.ServiceDefaults.csproj" />
         <ProjectReference Include="..\..\Modules\Notifications\Sample.Modules.Notifications\Sample.Modules.Notifications.csproj"/>
         <ProjectReference Include="..\..\Modules\Organizations\Sample.Modules.Organizations\Sample.Modules.Organizations.csproj"/>
         <ProjectReference Include="..\..\Modules\Users\Sample.Modules.Users\Sample.Modules.Users.csproj"/>

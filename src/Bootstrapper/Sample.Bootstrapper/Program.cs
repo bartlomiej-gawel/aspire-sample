@@ -1,4 +1,16 @@
+using Sample.Aspire.ServiceDefaults;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.AddServiceDefaults();
+
+
+
+
+
+
+
+
 
 // builder.Host.LoadModuleSettings();
 
