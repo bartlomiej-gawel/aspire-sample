@@ -8,11 +8,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="MediatR.Contracts" Version="2.0.1"/>
+        <ProjectReference Include="..\..\Shared\Sample.Shared.Infrastructure\Sample.Shared.Infrastructure.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="UsersModule\"/>
+        <PackageReference Include="FluentEmail.Smtp" Version="3.0.2"/>
     </ItemGroup>
 
 </Project>
