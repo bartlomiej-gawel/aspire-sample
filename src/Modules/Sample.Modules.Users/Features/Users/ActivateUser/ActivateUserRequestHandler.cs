@@ -3,7 +3,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Sample.Modules.Users.Database;
 using Sample.Modules.Users.Features.ActivationTokens;
-using Sample.Shared.Contracts.Users;
+using Sample.Shared.Contracts.UsersModule;
 
 namespace Sample.Modules.Users.Features.Users.ActivateUser;
 

@@ -1,6 +1,6 @@
 using MediatR;
 
-namespace Sample.Shared.Contracts.Users;
+namespace Sample.Shared.Contracts.UsersModule;
 
 public sealed record UserRegisteredNotification(
     Guid UserId,

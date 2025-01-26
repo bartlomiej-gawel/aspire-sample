@@ -1,5 +1,5 @@
 using MediatR;
-using Sample.Shared.Contracts.Users;
+using Sample.Shared.Contracts.UsersModule;
 using Sample.Shared.Infrastructure.Exceptions;
 
 namespace Sample.Modules.Organizations.Features.Organizations.InitializeOrganizationFromRegistration;
