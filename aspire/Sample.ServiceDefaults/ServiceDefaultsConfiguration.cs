@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Sample.Aspire.ServiceDefaults.Extensions;
+using Sample.ServiceDefaults.Extensions;
 using Serilog;
 using Serilog.Events;
 
-namespace Sample.Aspire.ServiceDefaults;
+namespace Sample.ServiceDefaults;
 
 public static class ServiceDefaultsConfiguration
 {

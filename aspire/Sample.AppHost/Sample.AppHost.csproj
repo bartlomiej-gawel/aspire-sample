@@ -7,20 +7,14 @@
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <IsAspireHost>true</IsAspireHost>
-        <UserSecretsId>f11e9953-862d-41eb-b234-247940f0e677</UserSecretsId>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <IsAspireHost>true</IsAspireHost>
+        <UserSecretsId>0366fae9-d0dd-4055-a24b-969c361ac8cb</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Build" Version="17.12.6"/>
-        <PackageReference Include="Microsoft.Build.Framework" Version="17.12.6"/>
         <PackageReference Include="Aspire.Hosting.AppHost" Version="9.0.0"/>
         <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="9.0.0"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="..\..\Bootstrapper\Sample.Bootstrapper\Sample.Bootstrapper.csproj"/>
     </ItemGroup>
 
 </Project>
